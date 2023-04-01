@@ -1,0 +1,4 @@
+- Basic layout for controls and inputs
+- Simulation is drawn next to the controls on a canvas
+- It is possible to set the different amplitude
+- It is possible to speed up the simulation: options "normal", "x10", "x100"

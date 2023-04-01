@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import HelloWorld from "./components/HelloWorld.vue";
+import Controls from "./components/Controls.vue";
 </script>
 
 <template>
   <header>
     <div class="wrapper">
-
+      <Controls>
+      </Controls>
     </div>
   </header>
 
   <main>
-    <HelloWorld msg="You did it!" />
-    <v-btn>Button</v-btn>
+    <HelloWorld msg="Under construction..." />
   </main>
 </template>
 
