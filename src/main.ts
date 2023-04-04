@@ -9,6 +9,9 @@ import "./assets/main.css";
 const vuetify = createVuetify({
     components,
     directives,
+    theme: {
+      defaultTheme: 'light'
+    }
   });
 
 createApp(App).use(vuetify).mount("#app");
