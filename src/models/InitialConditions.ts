@@ -5,6 +5,9 @@ export class FrequencyAndPhase {
     this.frequency = frequency;
     this.phase = phase;
   }
+  clone(): FrequencyAndPhase {
+    return new FrequencyAndPhase(this.frequency, this.phase);
+  }
 }
 
 export class InitialConditions {
@@ -14,6 +17,9 @@ export class InitialConditions {
     this.x = x;
     this.y = y;
   }
+  clone(): InitialConditions {
+    return new InitialConditions(this.x.clone(), this.y.clone());
+  };
   public toString(): string {
     return JSON.stringify(this, null, 2);
   }

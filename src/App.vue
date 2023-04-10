@@ -7,8 +7,8 @@ import Controls from "./components/Controls.vue";
 
 <script lang="ts">
 const initialConditions = new InitialConditions(
-  new FrequencyAndPhase(0, 10),
-  new FrequencyAndPhase(0, 10)
+  new FrequencyAndPhase(5, Math.PI / 2),
+  new FrequencyAndPhase(5, 0)
 )
 
 export default {
@@ -19,7 +19,6 @@ export default {
   },
   methods: {
     onConditionsChange(updatedConditions: InitialConditions) {
-      console.log(`Conditions change ${updatedConditions}`);
       this.conditions = updatedConditions;
     }
   }

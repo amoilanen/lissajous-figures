@@ -19,12 +19,12 @@ import { toRaw } from 'vue';
 export default {
   data() {
     return {
-      conditions: this.$props.initialConditions
+      conditions: this.$props.initialConditions.clone()
     }
   },
   methods: {
     updateConditions() {
-      this.$emit("change", toRaw(this.conditions));
+      this.$emit("change", this.conditions.clone());
     }
   }
 }
