@@ -5,18 +5,18 @@ import Controls from "./components/Controls.vue";
 
 <template>
   <v-layout>
-  <v-main>
-    <v-container class="wrapper">
-      <v-row>
-        <v-col cols="4">
-          <Controls />
-        </v-col>
-        <v-col cols="8">
-          <Canvas msg="Under construction..." />
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-main>
+    <v-main>
+      <v-container class="controls-and-canvas">
+        <v-row>
+          <v-col cols="4">
+            <Controls />
+          </v-col>
+          <v-col cols="8">
+            <Canvas msg="Under construction..." />
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
   </v-layout>
 </template>
 
