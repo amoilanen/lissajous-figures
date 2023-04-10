@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { InitialConditions, FrequencyAndPhase } from '@/models/InitialConditions';
+import { InitialConditions } from '@/models/InitialConditions';
+
+const props = defineProps({
+  initialConditions: {
+    type: InitialConditions,
+    required: true
+  }
+});
 
 const emit = defineEmits<{
   (e: 'change', conditions: InitialConditions): void
@@ -7,15 +14,18 @@ const emit = defineEmits<{
 </script>
 
 <script lang="ts">
-
-const initialConditions = new InitialConditions(
-  new FrequencyAndPhase(0, 10),
-  new FrequencyAndPhase(0, 10)
-)
+import { toRaw } from 'vue';
 
 export default {
   data() {
-    return InitialConditions
+    return {
+      conditions: this.$props.initialConditions
+    }
+  },
+  methods: {
+    updateConditions() {
+      this.$emit("change", toRaw(this.conditions));
+    }
   }
 }
 </script>
@@ -24,23 +34,23 @@ export default {
   <v-container class="controls">
     <v-row>
       <v-col cols="6">
-        <v-text-field v-model="initialConditions.x.phase" label="Phase X"></v-text-field>
+        <v-text-field v-model="conditions.x.phase" label="Phase X"></v-text-field>
       </v-col>
       <v-col cols="6">
-        <v-text-field v-model="initialConditions.x.frequency" label="Frequency X"></v-text-field>
+        <v-text-field v-model="conditions.x.frequency" label="Frequency X"></v-text-field>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="6">
-        <v-text-field v-model="initialConditions.y.phase" label="Phase Y"></v-text-field>
+        <v-text-field v-model="conditions.y.phase" label="Phase Y"></v-text-field>
       </v-col>
       <v-col cols="6">
-        <v-text-field v-model="initialConditions.y.frequency" label="Frequency Y"></v-text-field>
+        <v-text-field v-model="conditions.y.frequency" label="Frequency Y"></v-text-field>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
-        <v-btn>Draw</v-btn>
+        <v-btn @click="updateConditions">Draw</v-btn>
       </v-col>
     </v-row>
   </v-container>

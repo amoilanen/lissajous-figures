@@ -14,4 +14,7 @@ export class InitialConditions {
     this.x = x;
     this.y = y;
   }
+  public toString(): string {
+    return JSON.stringify(this, null, 2);
+  }
 }

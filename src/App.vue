@@ -1,6 +1,29 @@
 <script setup lang="ts">
+import { InitialConditions, FrequencyAndPhase } from '@/models/InitialConditions';
+
 import Canvas from "./components/Canvas.vue";
 import Controls from "./components/Controls.vue";
+</script>
+
+<script lang="ts">
+const initialConditions = new InitialConditions(
+  new FrequencyAndPhase(0, 10),
+  new FrequencyAndPhase(0, 10)
+)
+
+export default {
+  data() {
+    return {
+      conditions: initialConditions
+    }
+  },
+  methods: {
+    onConditionsChange(updatedConditions: InitialConditions) {
+      console.log(`Conditions change ${updatedConditions}`);
+      this.conditions = updatedConditions;
+    }
+  }
+}
 </script>
 
 <template>
@@ -9,10 +32,10 @@ import Controls from "./components/Controls.vue";
       <v-container class="controls-and-canvas">
         <v-row>
           <v-col cols="4">
-            <Controls />
+            <Controls :initialConditions="conditions" @change="onConditionsChange"/>
           </v-col>
           <v-col cols="8">
-            <Canvas msg="Under construction..." />
+            <Canvas :initialConditions="conditions" />
           </v-col>
         </v-row>
       </v-container>
