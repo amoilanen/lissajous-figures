@@ -5,4 +5,5 @@
 - It is possible to speed up the simulation: options "normal", "x10", "x100"
 - It is possible to use one of the pre-selected simulation parameters which would result in an interesting figure
 
+- Add a legend what is being drawn and explanation: formulas and physical interpretation
 - It is possible to set the different amplitude
