@@ -14,12 +14,6 @@ import { toRaw } from 'vue';
 
 export default {
   methods: {
-    canvasKey() {
-      const key = JSON.stringify(this.initialConditions);
-      console.log(key);
-      this.$forceUpdate();
-      return key;
-    },
     render() {
       console.log(`Render with properties ${this.initialConditions}`)
       const canvas = document.getElementById('oscillator-plane') as HTMLCanvasElement;
@@ -46,7 +40,7 @@ export default {
 <template>
   <v-container class="canvas">
     <v-row cols="12">
-      <canvas :key="canvasKey()" id="oscillator-plane" width="600" height="600"></canvas>
+      <canvas id="oscillator-plane" width="600" height="600"></canvas>
     </v-row>
     <v-row cols="12">
       <span class="text-h6">{{initialConditions}}</span>
