@@ -28,24 +28,14 @@ export default {
       const ctx = canvas.getContext('2d');
 
       if (ctx) {
-        let currentPoint = null;
         ctx.clearRect(0, 0, this.width, this.height)
-        for (let t = 0; t < 10000; t++) {
-          const normalizedT = t / 100 
+        for (let t = 0; t < 100000; t++) {
+          const normalizedT = t / 1000
           let x = amplitude * Math.cos(this.initialConditions.x.frequency * normalizedT + this.initialConditions.x.phase)
           let y = amplitude * Math.cos(this.initialConditions.y.frequency * normalizedT + this.initialConditions.y.phase)
           let canvasX = x + this.width / 2
           let canvasY = y + this.height / 2
-          if (currentPoint) {
-            ctx.beginPath();
-            ctx.moveTo(currentPoint.x, currentPoint.y)
-            ctx.lineTo(canvasX, canvasY)
-            ctx.stroke();
-          }
-          currentPoint = {
-            x: canvasX,
-            y: canvasY
-          }
+          ctx.fillRect(canvasX, canvasY,1,1);
         }
       }
     }
