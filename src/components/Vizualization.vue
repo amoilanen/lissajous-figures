@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { findCommonPeriod } from '@/math/CommonPeriodFinder';
 import { InitialConditions } from '@/models/InitialConditions';
 
 defineProps({
@@ -24,18 +25,6 @@ function isInteger(x: number): boolean {
   return Math.floor(x) == x;
 }
 
-function gcd(x: number, y: number): number {
-  let a = x
-  let b = y
-  let r = a % b
-  while (r > 0) {
-    a = b
-    b = r
-    r = a % b
-  }
-  return b
-}
-
 export default {
   methods: {
     render() {
@@ -43,22 +32,15 @@ export default {
       const canvas = document.getElementById('oscillator-plane') as HTMLCanvasElement;
       const ctx = canvas.getContext('2d');
 
-      let periodX = (2 * Math.PI) / this.initialConditions.x.frequency
-      let periodY = (2 * Math.PI) / this.initialConditions.y.frequency
-
       let maxTimeunits = 100; // Pessimisticly large value to draw the whole curve
       let timeTicksInTimeUnit = 1000
       let maxTime = maxTimeunits * timeTicksInTimeUnit
 
       console.log(`Default maxTimeunits = ${maxTimeunits}`)
 
-      //TODO: Test
-      //TODO: Illustration for why these formulas work
-      // Optimization to find the minimal period to draw the figure
-      if (isInteger(this.initialConditions.x.frequency) && isInteger(this.initialConditions.y.frequency)) {
-        let frequencyGcd = gcd(this.initialConditions.x.frequency, this.initialConditions.y.frequency)
-        let periodXTimes = this.initialConditions.x.frequency / frequencyGcd
-        maxTimeunits = periodXTimes * periodX
+       let commonPeriod = findCommonPeriod(this.initialConditions.x.frequency, this.initialConditions.y.frequency)
+      if (commonPeriod) {
+        maxTimeunits = commonPeriod
         let timeTicksInFullPeriod = 20000
         timeTicksInTimeUnit = Math.ceil(1 / maxTimeunits) * timeTicksInFullPeriod
         maxTime = maxTimeunits * timeTicksInTimeUnit
