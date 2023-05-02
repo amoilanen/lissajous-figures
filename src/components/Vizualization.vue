@@ -74,9 +74,6 @@ export default {
     <v-row cols="12">
       <canvas id="oscillator-plane" :width="width" :height="height"></canvas>
     </v-row>
-    <v-row cols="12">
-      <span class="text-h6">{{initialConditions}}</span>
-    </v-row>
   </v-container>
 </template>
 

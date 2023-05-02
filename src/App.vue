@@ -18,7 +18,8 @@ const canvasDimensions = {
 export default {
   data() {
     return {
-      conditions: initialConditions
+      conditions: initialConditions,
+      formula: '$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}.$$'
     }
   },
   methods: {
@@ -35,7 +36,28 @@ export default {
       <v-container class="controls-and-canvas">
         <v-row>
           <v-col cols="4">
-            <Controls :initialConditions="conditions" @change="onConditionsChange"/>
+            <v-container>
+                <v-row>
+                  <v-card
+                     class="mx-auto"
+                     width="100%"
+                     height="300"
+                     prepend-icon="mdi-home"
+                   >
+                     <template v-slot:title>
+                       Background Physics and Mathematics
+                     </template>
+                     <v-card-text>
+                       <a href="https://en.wikipedia.org/wiki/Lissajous_curve">Lissajous curve</a> is the trajectory of a body oscillating harmonically
+                       in two orthogonal directions x and y.
+                       <vue-mathjax :formula="formula" />
+                     </v-card-text>
+                  </v-card>
+                </v-row>
+                <v-row>
+                  <Controls :initialConditions="conditions" @change="onConditionsChange"/>
+                </v-row>
+            </v-container>
           </v-col>
           <v-col cols="8">
             <Vizualization

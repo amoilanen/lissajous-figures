@@ -14,7 +14,6 @@ const emit = defineEmits<{
 </script>
 
 <script lang="ts">
-import { toRaw } from 'vue';
 
 export default {
   data() {
