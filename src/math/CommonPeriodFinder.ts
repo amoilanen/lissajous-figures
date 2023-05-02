@@ -4,7 +4,6 @@ function isInteger(x: number): boolean {
   return Math.floor(x) == x;
 }
 
-//TODO: Test
 /*
  * Optimization to find the minimal period to draw the figure for the math
  * See [finding_common_period.jpg](../../docs/finding_common_period.jpg)
