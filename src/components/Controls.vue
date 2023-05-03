@@ -33,18 +33,18 @@ export default {
   <v-container class="controls">
     <v-row>
       <v-col cols="6">
-        <v-text-field v-model="conditions.x.phase" label="Phase X"></v-text-field>
+        <v-text-field v-model="conditions.x.phase" label="x initial phase"></v-text-field>
       </v-col>
       <v-col cols="6">
-        <v-text-field v-model="conditions.x.frequency" label="Frequency X"></v-text-field>
+        <v-text-field v-model="conditions.x.frequency" label="x frequency"></v-text-field>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="6">
-        <v-text-field v-model="conditions.y.phase" label="Phase Y"></v-text-field>
+        <v-text-field v-model="conditions.y.phase" label="y initial phase"></v-text-field>
       </v-col>
       <v-col cols="6">
-        <v-text-field v-model="conditions.y.frequency" label="Frequency Y"></v-text-field>
+        <v-text-field v-model="conditions.y.frequency" label="y frequency"></v-text-field>
       </v-col>
     </v-row>
     <v-row>
