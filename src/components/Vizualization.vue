@@ -79,6 +79,6 @@ export default {
 
 <style scoped>
   #oscillator-plane {
-    border: 1px solid;
+    border: 1px dotted;
   }
 </style>
