@@ -8,7 +8,7 @@ import Controls from "./components/Controls.vue";
 
 <script lang="ts">
 const initialConditions = new InitialConditions(
-  new FrequencyAndPhase(5, Math.PI / 2),
+  new FrequencyAndPhase(15, Math.PI / 2),
   new FrequencyAndPhase(5, 0)
 )
 const canvasDimensions = {

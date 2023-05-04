@@ -19,45 +19,50 @@ defineProps({
 </script>
 
 <script lang="ts">
-const amplitude = 300
 
-function isInteger(x: number): boolean {
-  return Math.floor(x) == x;
+function sleep(time: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, time));
 }
+
+// Pessimisticly large value to draw the whole curve
+const DEFAULT_MAX_TIME_UNITS = 100
+const TIME_TICKS_IN_TIME_UNIT = 5000
 
 export default {
   methods: {
-    render() {
-      console.log(`Render with properties ${this.initialConditions}`)
+    findMaxTimeUnits(): number {
+      let commonPeriod = findCommonPeriod(this.initialConditions.x.frequency, this.initialConditions.y.frequency)
+      return commonPeriod || DEFAULT_MAX_TIME_UNITS
+    },
+    getDrawingContext(): CanvasRenderingContext2D | null {
       const canvas = document.getElementById('oscillator-plane') as HTMLCanvasElement;
-      const ctx = canvas.getContext('2d');
-
-      let maxTimeunits = 100; // Pessimisticly large value to draw the whole curve
-      let timeTicksInTimeUnit = 1000
-      let maxTime = maxTimeunits * timeTicksInTimeUnit
-
-      console.log(`Default maxTimeunits = ${maxTimeunits}`)
-
-       let commonPeriod = findCommonPeriod(this.initialConditions.x.frequency, this.initialConditions.y.frequency)
-      if (commonPeriod) {
-        maxTimeunits = commonPeriod
-        let timeTicksInFullPeriod = 20000
-        timeTicksInTimeUnit = Math.ceil(1 / maxTimeunits) * timeTicksInFullPeriod
-        maxTime = maxTimeunits * timeTicksInTimeUnit
+      return canvas.getContext('2d');
+    },
+    drawPointOnCanvas(ctx: CanvasRenderingContext2D, x: number, y: number) {
+      let canvasX = x + this.width / 2
+      let canvasY = y + this.height / 2
+      ctx.fillRect(canvasX, canvasY, 1, 1);
+    },
+    async iterateThroughTime(f: (currentTime: number) => Promise<void>) {
+      let maxTimeunits = this.findMaxTimeUnits()
+      let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
+      for (let currentTimeUnit = 0; currentTimeUnit < maxTime; currentTimeUnit++) {
+        const currentTime = currentTimeUnit / TIME_TICKS_IN_TIME_UNIT
+        await f(currentTime)
       }
-
-      console.log(`Optimized maxTimeunits = ${maxTimeunits}`)
+    },
+    async render() {
+      const ctx = this.getDrawingContext()
+      const amplitude = this.width / 2
 
       if (ctx) {
         ctx.clearRect(0, 0, this.width, this.height)
-        for (let t = 0; t < maxTime; t++) {
-          const normalizedT = t / timeTicksInTimeUnit
-          let x = amplitude * Math.cos(this.initialConditions.x.frequency * normalizedT + this.initialConditions.x.phase)
-          let y = amplitude * Math.cos(this.initialConditions.y.frequency * normalizedT + this.initialConditions.y.phase)
-          let canvasX = x + this.width / 2
-          let canvasY = y + this.height / 2
-          ctx.fillRect(canvasX, canvasY,1,1);
-        }
+        this.iterateThroughTime(async currentTime => {
+           let x = amplitude * Math.cos(this.initialConditions.x.frequency * currentTime + this.initialConditions.x.phase)
+           let y = amplitude * Math.cos(this.initialConditions.y.frequency * currentTime + this.initialConditions.y.phase)
+           this.drawPointOnCanvas(ctx, x, y)
+           await sleep(0.001)
+         })
       }
     }
   },
