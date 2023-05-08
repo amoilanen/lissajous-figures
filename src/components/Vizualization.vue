@@ -61,7 +61,7 @@ export default {
            let x = amplitude * Math.cos(this.initialConditions.x.frequency * currentTime + this.initialConditions.x.phase)
            let y = amplitude * Math.cos(this.initialConditions.y.frequency * currentTime + this.initialConditions.y.phase)
            this.drawPointOnCanvas(ctx, x, y)
-           await sleep(0.001)
+           //await sleep(0.001)
          })
       }
     }
