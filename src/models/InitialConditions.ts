@@ -5,9 +5,6 @@ export class FrequencyAndPhase {
     this.frequency = frequency;
     this.phase = phase;
   }
-  clone(): FrequencyAndPhase {
-    return new FrequencyAndPhase(this.frequency, this.phase);
-  }
 }
 
 export class InitialConditions {
@@ -17,9 +14,6 @@ export class InitialConditions {
     this.x = x;
     this.y = y;
   }
-  clone(): InitialConditions {
-    return new InitialConditions(this.x.clone(), this.y.clone());
-  };
   public toString(): string {
     return JSON.stringify(this, null, 2);
   }
@@ -48,9 +42,11 @@ export class RawFrequencyAndPhase {
     this.frequency = frequency;
     this.phase = phase;
   }
-  //TODO: Implement and add tests
   parse(): FrequencyAndPhase {
     return new FrequencyAndPhase(parseFloat(this.frequency), parsePhase(this.phase))
+  }
+  clone(): RawFrequencyAndPhase {
+    return new RawFrequencyAndPhase(this.frequency, this.phase);
   }
 }
 
@@ -63,6 +59,9 @@ export class RawInitialConditions {
   }
   parse(): InitialConditions {
     return new InitialConditions(this.x.parse(), this.y.parse());
+  };
+  clone(): RawInitialConditions {
+    return new RawInitialConditions(this.x.clone(), this.y.clone());
   };
   public toString(): string {
     return JSON.stringify(this, null, 2);

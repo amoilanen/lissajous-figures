@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { InitialConditions } from '@/models/InitialConditions';
+import { InitialConditions, RawInitialConditions, FrequencyAndPhase } from '@/models/InitialConditions';
 
 const props = defineProps({
-  initialConditions: {
-    type: InitialConditions,
+  rawInitialConditions: {
+    type: RawInitialConditions,
     required: true
   }
 });
@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       areInputsValid: true,
-      conditions: this.$props.initialConditions.clone(),
+      rawConditions: this.$props.rawInitialConditions.clone(),
       rules: {
         frequency: [
           (value: string) => {
@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     updateConditions() {
-      this.$emit("change", this.conditions.clone());
+      this.$emit("change", this.rawConditions.parse());
     }
   },
   mounted() {
@@ -56,18 +56,18 @@ export default {
     <v-container class="controls">
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="conditions.x.phase" :rules="rules.phase" label="x initial phase"></v-text-field>
+          <v-text-field v-model="rawConditions.x.phase" :rules="rules.phase" label="x initial phase"></v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="conditions.x.frequency" :rules="rules.frequency" label="x frequency"></v-text-field>
+          <v-text-field v-model="rawConditions.x.frequency" :rules="rules.frequency" label="x frequency"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="conditions.y.phase" :rules="rules.phase" label="y initial phase"></v-text-field>
+          <v-text-field v-model="rawConditions.y.phase" :rules="rules.phase" label="y initial phase"></v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="conditions.y.frequency" :rules="rules.frequency" label="y frequency"></v-text-field>
+          <v-text-field v-model="rawConditions.y.frequency" :rules="rules.frequency" label="y frequency"></v-text-field>
         </v-col>
       </v-row>
       <v-row>

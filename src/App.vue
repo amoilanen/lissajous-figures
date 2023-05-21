@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { InitialConditions, FrequencyAndPhase } from '@/models/InitialConditions';
+import { RawInitialConditions, InitialConditions, RawFrequencyAndPhase } from '@/models/InitialConditions';
 
 import Explanation from "./components/Explanation.vue";
 import Vizualization from "./components/Vizualization.vue";
@@ -7,9 +7,9 @@ import Controls from "./components/Controls.vue";
 </script>
 
 <script lang="ts">
-const initialConditions = new InitialConditions(
-  new FrequencyAndPhase(15, Math.PI / 2),
-  new FrequencyAndPhase(5, 0)
+const rawInitialConditions = new RawInitialConditions(
+  new RawFrequencyAndPhase("15", "𝝅/2"),
+  new RawFrequencyAndPhase("5", "0")
 )
 const canvasDimensions = {
   width: 600,
@@ -19,12 +19,13 @@ const canvasDimensions = {
 export default {
   data() {
     return {
-      conditions: initialConditions
+      initialConditions: null as (null | InitialConditions),
+      rawInitialConditions: rawInitialConditions
     }
   },
   methods: {
-    onConditionsChange(updatedConditions: InitialConditions) {
-      this.conditions = updatedConditions;
+    onConditionsChange(initialConditions: InitialConditions) {
+      this.initialConditions = initialConditions;
     }
   }
 }
@@ -41,7 +42,7 @@ export default {
                   <Explanation />
                 </v-row>
                 <v-row>
-                  <Controls class="mt-10" :initialConditions="conditions" @change="onConditionsChange"/>
+                  <Controls class="mt-10" :rawInitialConditions="rawInitialConditions" @change="onConditionsChange"/>
                 </v-row>
             </v-container>
           </v-col>
@@ -49,7 +50,7 @@ export default {
             <Vizualization
               :width="canvasDimensions.width"
               :height="canvasDimensions.height"
-              :initialConditions="conditions" />
+              :initialConditions="initialConditions || rawInitialConditions.parse()" />
           </v-col>
         </v-row>
       </v-container>
