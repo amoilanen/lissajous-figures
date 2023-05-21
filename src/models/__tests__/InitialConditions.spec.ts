@@ -41,6 +41,11 @@ it('parsePhase should parse pi multipled and divided by different numbers', () =
   expect(parsePhase('3 * 𝝅 / 2')).to.equal(3 * Math.PI / 2)
 })
 
+it('parsePhase should parse pi multipled and divided by different numbers with different signs', () => {
+  expect(parsePhase('-3𝝅/2')).to.equal(-3 * Math.PI / 2)
+  expect(parsePhase('3𝝅/-2')).to.equal(-3 * Math.PI / 2)
+})
+
 it('parsePhase should parse a valid expression not containing pi', () => {
   expect(parsePhase('123.45')).to.equal(123.45)
 })

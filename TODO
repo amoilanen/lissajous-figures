@@ -1,8 +1,7 @@
 - Basic layout for controls and inputs - DONE
 - Simulation is drawn next to the controls on a canvas - DONE
 - Visual explanation of what is drawn: the formulas - DONE
-
-- It is possible to input pi, pi / 2, pi / 4 as inputs
+- It is possible to input pi, pi / 2, pi / 4 as inputs - DONE
 
 - It is possible to stop the simulation drawing
 - It is possible to speed up the simulation: options "normal", "x10", "x100"

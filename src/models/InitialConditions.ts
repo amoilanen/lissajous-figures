@@ -21,7 +21,7 @@ export class InitialConditions {
 
 export function parsePhase(input: string): number {
   // Parsing the expression of the form a * 𝝅 / b
-  let match = input.match(/(\d)?\s*\*?\s*𝝅\s*(\/?\s*(\d+))?/)
+  let match = input.match(/(\-?\d)?\s*\*?\s*𝝅\s*(\/?\s*(\-?\d+))?/)
   if (match) {
     let a = 1
     if (match[1])
