@@ -25,6 +25,22 @@ export class InitialConditions {
   }
 }
 
+export function parsePhase(input: string): number {
+  // Parsing the expression of the form a * 𝝅 / b
+  let match = input.match(/(\d)?\s*\*?\s*𝝅\s*(\/?\s*(\d+))?/)
+  if (match) {
+    let a = 1
+    if (match[1])
+      a = parseInt(match[1])
+    let b = 1
+    if (match[3])
+      b = parseInt(match[3])
+    return a * Math.PI / b
+  } else {
+    return parseFloat(input)
+  }
+}
+
 export class RawFrequencyAndPhase {
   frequency: string;
   phase: string;
@@ -34,7 +50,7 @@ export class RawFrequencyAndPhase {
   }
   //TODO: Implement and add tests
   parse(): FrequencyAndPhase {
-    return new FrequencyAndPhase(parseFloat(this.frequency), parseFloat(this.phase))
+    return new FrequencyAndPhase(parseFloat(this.frequency), parsePhase(this.phase))
   }
 }
 
