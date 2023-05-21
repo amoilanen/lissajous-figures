@@ -47,5 +47,14 @@ export default {
   </v-card>
 </template>
 
-<style scoped>
+<style>
+  .block-formula > .MathJax_Display {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .inline-formula > .MathJax_Display {
+    display: inline-block !important;
+    max-width: 16px;
+  }
 </style>
