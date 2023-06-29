@@ -1,12 +1,12 @@
 import { expect, it } from 'vitest'
 import isEqual from 'lodash.isequal';
 
-import { FrequencyAndPhase, RawFrequencyAndPhase, parsePhase } from '@/models/InitialConditions'
+import { FrequencyAndPhase, FrequencyAndPhaseInput, InitialConditions, InitialConditionsInput, parsePhase } from '@/models/InitialConditions'
 
 it('RawFrequencyAndPhase.parse should parse pi symbol', () => {
   expect(
     isEqual(
-      new RawFrequencyAndPhase("10", "3𝝅/2").parse(),
+      new FrequencyAndPhaseInput("10", "3𝝅/2").parse(),
       new FrequencyAndPhase(10, 3 * Math.PI / 2))
   ).to.be.true;
 })
@@ -14,9 +14,24 @@ it('RawFrequencyAndPhase.parse should parse pi symbol', () => {
 it('RawFrequencyAndPhase.parse should parse number input', () => {
   expect(
     isEqual(
-      new RawFrequencyAndPhase("123.45", "3.45").parse(),
+      new FrequencyAndPhaseInput("123.45", "3.45").parse(),
       new FrequencyAndPhase(123.45, 3.45))
   ).to.be.true;
+})
+
+it('InitialConditionsInput.parse should parse input', () => {
+  expect(
+    isEqual(
+      new InitialConditionsInput(
+        new FrequencyAndPhaseInput("10", "𝝅/2"),
+        new FrequencyAndPhaseInput("5", "5𝝅/4")
+      ).parse(),
+      new InitialConditions(
+        new FrequencyAndPhase(10, Math.PI / 2),
+        new FrequencyAndPhase(5, 5 * Math.PI / 4)
+      )
+    )
+  )
 })
 
 it('parsePhase should parse only pi', () => {

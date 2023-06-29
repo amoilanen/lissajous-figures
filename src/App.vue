@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RawInitialConditions, InitialConditions, RawFrequencyAndPhase } from '@/models/InitialConditions';
+import { RawInitialConditions, InitialConditions, FrequencyAndPhaseInput } from '@/models/InitialConditions';
 
 import Explanation from "./components/Explanation.vue";
 import Vizualization from "./components/Vizualization.vue";
@@ -8,8 +8,8 @@ import Controls from "./components/Controls.vue";
 
 <script lang="ts">
 const rawInitialConditions = new RawInitialConditions(
-  new RawFrequencyAndPhase("15", "𝝅/2"),
-  new RawFrequencyAndPhase("5", "0")
+  new FrequencyAndPhaseInput("15", "𝝅/2"),
+  new FrequencyAndPhaseInput("5", "0")
 )
 const canvasDimensions = {
   width: 600,

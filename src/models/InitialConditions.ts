@@ -20,22 +20,22 @@ export class InitialConditions {
 }
 
 export function parsePhase(input: string): number {
-  // Parsing the expression of the form a * 𝝅 / b
+  // Parsing the expression of the form times * 𝝅 / dividedBy
   let match = input.match(/(\-?\d)?\s*\*?\s*𝝅\s*(\/?\s*(\-?\d+))?/)
   if (match) {
-    let a = 1
+    let times = 1
     if (match[1])
-      a = parseInt(match[1])
-    let b = 1
+      times = parseInt(match[1])
+    let dividedBy = 1
     if (match[3])
-      b = parseInt(match[3])
-    return a * Math.PI / b
+      dividedBy = parseInt(match[3])
+    return times * Math.PI / dividedBy
   } else {
     return parseFloat(input)
   }
 }
 
-export class RawFrequencyAndPhase {
+export class FrequencyAndPhaseInput {
   frequency: string;
   phase: string;
   constructor(frequency: string, phase: string) {
@@ -45,23 +45,23 @@ export class RawFrequencyAndPhase {
   parse(): FrequencyAndPhase {
     return new FrequencyAndPhase(parseFloat(this.frequency), parsePhase(this.phase))
   }
-  clone(): RawFrequencyAndPhase {
-    return new RawFrequencyAndPhase(this.frequency, this.phase);
+  clone(): FrequencyAndPhaseInput {
+    return new FrequencyAndPhaseInput(this.frequency, this.phase);
   }
 }
 
-export class RawInitialConditions {
-  x: RawFrequencyAndPhase;
-  y: RawFrequencyAndPhase;
-  constructor(x: RawFrequencyAndPhase, y: RawFrequencyAndPhase) {
+export class InitialConditionsInput {
+  x: FrequencyAndPhaseInput;
+  y: FrequencyAndPhaseInput;
+  constructor(x: FrequencyAndPhaseInput, y: FrequencyAndPhaseInput) {
     this.x = x;
     this.y = y;
   }
   parse(): InitialConditions {
     return new InitialConditions(this.x.parse(), this.y.parse());
   };
-  clone(): RawInitialConditions {
-    return new RawInitialConditions(this.x.clone(), this.y.clone());
+  clone(): InitialConditionsInput {
+    return new InitialConditionsInput(this.x.clone(), this.y.clone());
   };
   public toString(): string {
     return JSON.stringify(this, null, 2);
