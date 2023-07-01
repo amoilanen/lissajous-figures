@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { InitialConditions, RawInitialConditions, FrequencyAndPhase } from '@/models/InitialConditions';
+import { InitialConditions, InitialConditionsInput, FrequencyAndPhase } from '@/models/InitialConditions';
 
 const props = defineProps({
-  rawInitialConditions: {
-    type: RawInitialConditions,
+  initialConditionsInput: {
+    type: InitialConditionsInput,
     required: true
   }
 });
@@ -15,34 +15,27 @@ const emit = defineEmits<{
 
 <script lang="ts">
 
+function numberValidation(value: string): boolean | string {
+  if (/[\d\.]+/.test(value))
+    return true
+  else
+    return "Should be a number"
+}
+
 export default {
   data() {
     return {
       areInputsValid: true,
-      rawConditions: this.$props.rawInitialConditions.clone(),
+      conditionsInput: this.$props.initialConditionsInput.clone(),
       rules: {
-        frequency: [
-          (value: string) => {
-            if (/[\d\.]+/.test(value))
-              return true
-            else
-             return "Frequency should be a number"
-          }
-        ],
-        phase: [
-          (value: string) => {
-            if (/[\d\.]+/.test(value))
-              return true
-            else
-             return "Phase should be a number"
-          }
-        ]
+        frequency: [ numberValidation ],
+        phase: [ numberValidation ]
       }
     }
   },
   methods: {
     updateConditions() {
-      this.$emit("change", this.rawConditions.parse());
+      this.$emit("change", this.conditionsInput.parse());
     }
   },
   mounted() {
@@ -56,18 +49,18 @@ export default {
     <v-container class="controls">
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="rawConditions.x.phase" :rules="rules.phase" label="x initial phase"></v-text-field>
+          <v-text-field v-model="conditionsInput.x.phase" :rules="rules.phase" label="x initial phase"></v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="rawConditions.x.frequency" :rules="rules.frequency" label="x frequency"></v-text-field>
+          <v-text-field v-model="conditionsInput.x.frequency" :rules="rules.frequency" label="x frequency"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="rawConditions.y.phase" :rules="rules.phase" label="y initial phase"></v-text-field>
+          <v-text-field v-model="conditionsInput.y.phase" :rules="rules.phase" label="y initial phase"></v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="rawConditions.y.frequency" :rules="rules.frequency" label="y frequency"></v-text-field>
+          <v-text-field v-model="conditionsInput.y.frequency" :rules="rules.frequency" label="y frequency"></v-text-field>
         </v-col>
       </v-row>
       <v-row>

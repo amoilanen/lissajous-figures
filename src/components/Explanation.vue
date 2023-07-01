@@ -33,16 +33,15 @@ export default {
        Background Physics and Mathematics
      </template>
      <v-card-text>
-       <p><a href="https://en.wikipedia.org/wiki/Lissajous_curve">Lissajous curve</a> is the trajectory of a body oscillating harmonically
+       <p><a href="https://en.wikipedia.org/wiki/Lissajous_curve">Lissajous curve</a> is a trajectory of a body oscillating harmonically
        in two orthogonal directions x and y.</p><br/>
-       <p>The motion equation if the amplitudes in both directions are the same:</p>
+       <p>The motion equations if the amplitudes in both directions are the same:</p>
        <vue-mathjax class="block-formula" :formula="mathFormulas.motionEquation" />
        where <vue-mathjax class="inline-formula" :formula="mathFormulas.amplitude" /> is amplitude,
        <vue-mathjax class="inline-formula" :formula="mathFormulas.xFrequency" /> and <vue-mathjax class="inline-formula" :formula="mathFormulas.xPhase" />
        are the frequency and the initial phase of the oscillation along the x axis, and
        <vue-mathjax class="inline-formula" :formula="mathFormulas.yFrequency" /> and <vue-mathjax class="inline-formula" :formula="mathFormulas.yPhase" />
-       are the frequency and the initial phase of the oscillation along the y axis, and
-       <vue-mathjax class="inline-formula" :formula="mathFormulas.time" /> is time.
+       are the frequency and the initial phase of the oscillation along the y axis, and <vue-mathjax class="inline-formula" :formula="mathFormulas.time" /> is time.
      </v-card-text>
   </v-card>
 </template>

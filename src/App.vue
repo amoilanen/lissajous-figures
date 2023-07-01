@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RawInitialConditions, InitialConditions, FrequencyAndPhaseInput } from '@/models/InitialConditions';
+import { InitialConditionsInput, InitialConditions, FrequencyAndPhaseInput } from '@/models/InitialConditions';
 
 import Explanation from "./components/Explanation.vue";
 import Vizualization from "./components/Vizualization.vue";
@@ -7,7 +7,7 @@ import Controls from "./components/Controls.vue";
 </script>
 
 <script lang="ts">
-const rawInitialConditions = new RawInitialConditions(
+const initialConditionsInput = new InitialConditionsInput(
   new FrequencyAndPhaseInput("15", "𝝅/2"),
   new FrequencyAndPhaseInput("5", "0")
 )
@@ -20,7 +20,7 @@ export default {
   data() {
     return {
       initialConditions: null as (null | InitialConditions),
-      rawInitialConditions: rawInitialConditions
+      initialConditionsInput: initialConditionsInput
     }
   },
   methods: {
@@ -42,7 +42,7 @@ export default {
                   <Explanation />
                 </v-row>
                 <v-row>
-                  <Controls class="mt-10" :rawInitialConditions="rawInitialConditions" @change="onConditionsChange"/>
+                  <Controls class="mt-10" :initialConditionsInput="initialConditionsInput" @change="onConditionsChange"/>
                 </v-row>
             </v-container>
           </v-col>
@@ -50,7 +50,7 @@ export default {
             <Vizualization
               :width="canvasDimensions.width"
               :height="canvasDimensions.height"
-              :initialConditions="initialConditions || rawInitialConditions.parse()" />
+              :initialConditions="initialConditions || initialConditionsInput.parse()" />
           </v-col>
         </v-row>
       </v-container>
