@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
-import { ref, onMounted } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 
 const props = defineProps({
   width: {
