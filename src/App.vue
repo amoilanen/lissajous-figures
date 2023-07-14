@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { reactive } from 'vue';
+
 import { InitialConditionsInput, InitialConditions, FrequencyAndPhaseInput } from '@/models/InitialConditions';
 
 import Explanation from "./components/Explanation.vue";
 import Vizualization from "./components/Vizualization.vue";
 import Controls from "./components/Controls.vue";
-</script>
 
-<script lang="ts">
 const initialConditionsInput = new InitialConditionsInput(
   new FrequencyAndPhaseInput("15", "𝝅/2"),
   new FrequencyAndPhaseInput("5", "0")
@@ -16,18 +16,13 @@ const canvasDimensions = {
   height: 600
 }
 
-export default {
-  data() {
-    return {
-      initialConditions: null as (null | InitialConditions),
-      initialConditionsInput: initialConditionsInput
-    }
-  },
-  methods: {
-    onConditionsChange(initialConditions: InitialConditions) {
-      this.initialConditions = initialConditions;
-    }
-  }
+const state = reactive({
+  initialConditions: null as (null | InitialConditions),
+  initialConditionsInput: initialConditionsInput
+})
+
+function onConditionsChange(initialConditions: InitialConditions) {
+  state.initialConditions = initialConditions;
 }
 </script>
 
@@ -42,7 +37,7 @@ export default {
                   <Explanation />
                 </v-row>
                 <v-row>
-                  <Controls class="mt-10" :initialConditionsInput="initialConditionsInput" @change="onConditionsChange"/>
+                  <Controls class="mt-10" :initialConditionsInput="state.initialConditionsInput" @change="onConditionsChange"/>
                 </v-row>
             </v-container>
           </v-col>
@@ -50,7 +45,7 @@ export default {
             <Vizualization
               :width="canvasDimensions.width"
               :height="canvasDimensions.height"
-              :initialConditions="initialConditions || initialConditionsInput.parse()" />
+              :initialConditions="state.initialConditions || state.initialConditionsInput.parse()" />
           </v-col>
         </v-row>
       </v-container>

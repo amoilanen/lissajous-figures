@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
+
 import { findCommonPeriod } from '@/math/CommonPeriodFinder';
 import { InitialConditions } from '@/models/InitialConditions';
 import DrawingCanvas from '@/components/DrawingCanvas.vue';
 
-defineProps({
+const props = defineProps({
   initialConditions: {
     type: InitialConditions,
     required: true
@@ -17,9 +19,9 @@ defineProps({
     required: true
   }
 })
-</script>
 
-<script lang="ts">
+const canvasRef = ref<typeof DrawingCanvas | null>(null)
+
 function sleep(time: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, time));
 }
@@ -28,39 +30,35 @@ function sleep(time: number): Promise<void> {
 const DEFAULT_MAX_TIME_UNITS = 100
 const TIME_TICKS_IN_TIME_UNIT = 10000
 
-export default {
-  methods: {
-    findMaxTimeUnits(): number {
-      let commonPeriod = findCommonPeriod(this.initialConditions.x.frequency, this.initialConditions.y.frequency)
-      return commonPeriod || DEFAULT_MAX_TIME_UNITS
-    },
-    async iterateThroughTime(f: (currentTime: number) => Promise<void>) {
-      let maxTimeunits = this.findMaxTimeUnits()
-      let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
-      for (let currentTimeUnit = 0; currentTimeUnit < maxTime; currentTimeUnit++) {
-        const currentTime = currentTimeUnit * TIME_TICKS_IN_TIME_UNIT
-        await f(currentTime)
-      }
-    },
-    async render() {
-      const canvas = this.$refs.canvasRef as typeof DrawingCanvas
-      const amplitude = this.width / 2
+function findMaxTimeUnits(): number {
+  let commonPeriod = findCommonPeriod(props.initialConditions.x.frequency, props.initialConditions.y.frequency)
+  return commonPeriod || DEFAULT_MAX_TIME_UNITS
+}
 
-      await canvas.clear()
-      this.iterateThroughTime(async currentTime => {
-        let x = amplitude * Math.cos(this.initialConditions.x.frequency * currentTime + this.initialConditions.x.phase)
-        let y = amplitude * Math.cos(this.initialConditions.y.frequency * currentTime + this.initialConditions.y.phase)
-        await canvas.drawPoint(x, y)
-        //await sleep(0.001)
-      })
-    }
-  },
-  watch: {
-    initialConditions: function(newVal, oldVal) {
-      this.render();
-    }
+async function iterateThroughTime(f: (currentTime: number) => Promise<void>): Promise<void> {
+  let maxTimeunits = findMaxTimeUnits()
+  let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
+  for (let currentTimeUnit = 0; currentTimeUnit < maxTime; currentTimeUnit++) {
+    const currentTime = currentTimeUnit * TIME_TICKS_IN_TIME_UNIT
+    await f(currentTime)
   }
 }
+
+async function render(): Promise<void> {
+  const canvas = canvasRef.value! as typeof DrawingCanvas
+  const amplitude = props.width / 2
+  await canvas.clear()
+  iterateThroughTime(async currentTime => {
+    let x = amplitude * Math.cos(props.initialConditions.x.frequency * currentTime + props.initialConditions.x.phase)
+    let y = amplitude * Math.cos(props.initialConditions.y.frequency * currentTime + props.initialConditions.y.phase)
+    await canvas.drawPoint(x, y)
+    //await sleep(0.001)
+  })
+}
+
+watch(() => props.initialConditions, function(newVal, oldVal) {
+  render()
+})
 </script>
 
 <template>

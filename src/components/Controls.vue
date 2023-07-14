@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
-import { InitialConditions, InitialConditionsInput, FrequencyAndPhase } from '@/models/InitialConditions'
+import { InitialConditions, InitialConditionsInput } from '@/models/InitialConditions'
 
 const props = defineProps({
   initialConditionsInput: {

@@ -1,25 +1,18 @@
-<script lang="ts">
-
-export default {
-  data() {
-    return {
-      mathFormulas: {
-        motionEquation: `$$
-          \\begin{cases}
-            x = {A \\cos(\\omega_x t + \\phi_x)}\\\\
-            y = {A \\cos(\\omega_y t + \\phi_y)}
-          \\end{cases}
-          $$`,
-        amplitude: `$$ A $$`,
-        xFrequency: `$$\\omega_x$$`,
-        xPhase: `$$\\phi_x$$`,
-        yFrequency: `$$\\omega_y$$`,
-        yPhase: `$$\\phi_y$$`,
-        time: `$$ t $$`,
-      }
-    }
-  }
-}
+<script setup lang="ts">
+  const mathFormulas = {
+    motionEquation: `$$
+      \\begin{cases}
+        x = {A \\cos(\\omega_x t + \\phi_x)}\\\\
+        y = {A \\cos(\\omega_y t + \\phi_y)}
+      \\end{cases}
+      $$`,
+    amplitude: `$$ A $$`,
+    xFrequency: `$$\\omega_x$$`,
+    xPhase: `$$\\phi_x$$`,
+    yFrequency: `$$\\omega_y$$`,
+    yPhase: `$$\\phi_y$$`,
+    time: `$$ t $$`,
+  };
 </script>
 
 <template>
