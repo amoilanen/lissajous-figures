@@ -25,13 +25,18 @@ onMounted(() => {
 })
 
 async function clear() {
-  state.ctx?.clearRect(0, 0, props.width, props.height)
+  state.ctx!.clearRect(0, 0, props.width, props.height)
 }
 
-async function drawPoint(x: number, y: number) {
+async function drawPoint(x: number, y: number, color: string = 'black', size: number = 2) {
   let canvasX = x + props.width / 2
   let canvasY = y + props.height / 2
-  state.ctx?.fillRect(canvasX, canvasY, 1, 1);
+
+  let ctx = state.ctx!
+  ctx.fillStyle = 'black';
+  ctx.beginPath();
+  ctx.arc(canvasX, canvasY, size, 0, 2 * Math.PI);
+  ctx.fill();
 }
 
 defineExpose({

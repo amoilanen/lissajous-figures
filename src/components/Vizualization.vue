@@ -28,7 +28,7 @@ function sleep(time: number): Promise<void> {
 
 // Pessimisticly large value to draw the whole curve
 const DEFAULT_MAX_TIME_UNITS = 100
-const TIME_TICKS_IN_TIME_UNIT = 10000
+const TIME_TICKS_IN_TIME_UNIT = 5000
 
 function findMaxTimeUnits(): number {
   let commonPeriod = findCommonPeriod(props.initialConditions.x.frequency, props.initialConditions.y.frequency)
@@ -38,9 +38,8 @@ function findMaxTimeUnits(): number {
 async function iterateThroughTime(f: (currentTime: number) => Promise<void>): Promise<void> {
   let maxTimeunits = findMaxTimeUnits()
   let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
-  for (let currentTimeUnit = 0; currentTimeUnit < maxTime; currentTimeUnit++) {
-    const currentTime = currentTimeUnit * TIME_TICKS_IN_TIME_UNIT
-    await f(currentTime)
+  for (let currentTime = 0; currentTime < maxTime; currentTime++) {
+    await f(currentTime / TIME_TICKS_IN_TIME_UNIT)
   }
 }
 
@@ -52,7 +51,7 @@ async function render(): Promise<void> {
     let x = amplitude * Math.cos(props.initialConditions.x.frequency * currentTime + props.initialConditions.x.phase)
     let y = amplitude * Math.cos(props.initialConditions.y.frequency * currentTime + props.initialConditions.y.phase)
     await canvas.drawPoint(x, y)
-    //await sleep(0.001)
+    await sleep(0.001)
   })
 }
 
