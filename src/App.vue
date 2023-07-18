@@ -27,30 +27,32 @@ function onConditionsChange(initialConditions: InitialConditions) {
 </script>
 
 <template>
-  <v-layout>
-    <v-main>
-      <v-container class="controls-and-canvas">
-        <v-row>
-          <v-col cols="4">
-            <v-container>
-                <v-row>
-                  <Explanation />
-                </v-row>
-                <v-row>
-                  <Controls class="mt-10" :initialConditionsInput="state.initialConditionsInput" @change="onConditionsChange"/>
-                </v-row>
-            </v-container>
-          </v-col>
-          <v-col cols="8">
-            <Vizualization
-              :width="canvasDimensions.width"
-              :height="canvasDimensions.height"
-              :initialConditions="state.initialConditions || state.initialConditionsInput.parse()" />
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-main>
-  </v-layout>
+  <v-app>
+    <v-layout>
+      <v-main>
+        <v-container class="controls-and-canvas">
+          <v-row>
+            <v-col cols="4">
+              <v-container>
+                  <v-row>
+                    <Explanation />
+                  </v-row>
+                  <v-row>
+                    <Controls class="mt-10" :initialConditionsInput="state.initialConditionsInput" @change="onConditionsChange"/>
+                  </v-row>
+              </v-container>
+            </v-col>
+            <v-col cols="8">
+              <Vizualization
+                :width="canvasDimensions.width"
+                :height="canvasDimensions.height"
+                :initialConditions="state.initialConditions || state.initialConditionsInput.parse()" />
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-main>
+    </v-layout>
+  </v-app>
 </template>
 
 <style>

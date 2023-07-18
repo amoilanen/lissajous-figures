@@ -20,7 +20,9 @@ function numberValidation(value: string): boolean | string {
     return "Should be a number"
 }
 
+const timeSpeedMax = 10000
 const state = reactive({
+  timeSpeed: timeSpeedMax,
   areInputsValid: true,
   conditionsInput: props.initialConditionsInput.clone(),
   rules: {
@@ -38,6 +40,9 @@ onMounted(() => {
 function updateConditions() {
   emit("change", state.conditionsInput.parse());
 }
+
+//TODO: On changes to timeSpeed, emit a speedChange event
+
 </script>
 
 <template>
@@ -62,6 +67,30 @@ function updateConditions() {
       <v-row>
         <v-col cols="12">
           <v-btn @click="updateConditions" :disabled="!state.areInputsValid">Draw</v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="6">
+        </v-col>
+        <v-col cols="6">
+          <v-label
+            class="text-caption"
+            text="Time speed:" />
+          <v-slider
+            v-model="state.timeSpeed"
+            :min="0"
+            :max="timeSpeedMax">
+            <template v-slot:prepend>
+              <v-label
+                text="min"
+              ></v-label>
+            </template>
+            <template v-slot:append>
+              <v-label
+                text="max"
+              ></v-label>
+            </template>
+          ></v-slider>
         </v-col>
       </v-row>
     </v-container>
