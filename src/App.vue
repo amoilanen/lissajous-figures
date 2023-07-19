@@ -17,12 +17,17 @@ const canvasDimensions = {
 }
 
 const state = reactive({
+  timeSpeed: 1,
   initialConditions: null as (null | InitialConditions),
   initialConditionsInput: initialConditionsInput
 })
 
 function onConditionsChange(initialConditions: InitialConditions) {
-  state.initialConditions = initialConditions;
+  state.initialConditions = initialConditions
+}
+
+function onTimeSpeedChange(timeSpeed: number) {
+  state.timeSpeed = timeSpeed
 }
 </script>
 
@@ -38,7 +43,11 @@ function onConditionsChange(initialConditions: InitialConditions) {
                     <Explanation />
                   </v-row>
                   <v-row>
-                    <Controls class="mt-10" :initialConditionsInput="state.initialConditionsInput" @change="onConditionsChange"/>
+                    <Controls class="mt-10"
+                      :initialConditionsInput="state.initialConditionsInput"
+                      @conditionsChange="onConditionsChange"
+                      @timeSpeedChange="onTimeSpeedChange"
+                    />
                   </v-row>
               </v-container>
             </v-col>
@@ -46,6 +55,7 @@ function onConditionsChange(initialConditions: InitialConditions) {
               <Vizualization
                 :width="canvasDimensions.width"
                 :height="canvasDimensions.height"
+                :timeSpeed="state.timeSpeed"
                 :initialConditions="state.initialConditions || state.initialConditionsInput.parse()" />
             </v-col>
           </v-row>

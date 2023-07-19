@@ -6,6 +6,10 @@ import { InitialConditions } from '@/models/InitialConditions';
 import DrawingCanvas from '@/components/DrawingCanvas.vue';
 
 const props = defineProps({
+  timeSpeed: {
+    type: Number,
+    required: true
+  },
   initialConditions: {
     type: InitialConditions,
     required: true
@@ -43,15 +47,26 @@ async function iterateThroughTime(f: (currentTime: number) => Promise<void>): Pr
   }
 }
 
+//TODO: When changing speed or initial conditions cancel the current drawing which is still going on on the canvas
 async function render(): Promise<void> {
+  const batchSize = 50
+  let i = 0
   const canvas = canvasRef.value! as typeof DrawingCanvas
   const amplitude = props.width / 2
   await canvas.clear()
+  const slowdownCoefficient = 1 - props.timeSpeed
+  console.log(`slowdownCoefficient = ${slowdownCoefficient}`)
   iterateThroughTime(async currentTime => {
     let x = amplitude * Math.cos(props.initialConditions.x.frequency * currentTime + props.initialConditions.x.phase)
     let y = amplitude * Math.cos(props.initialConditions.y.frequency * currentTime + props.initialConditions.y.phase)
     await canvas.drawPoint(x, y)
-    await sleep(0.001)
+    i++;
+    if (i == batchSize) {
+      if (slowdownCoefficient > 0) {
+        await sleep(slowdownCoefficient * 1000)
+      }
+      i = 0
+    }
   })
 }
 

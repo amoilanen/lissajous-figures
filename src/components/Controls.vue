@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, watch, onMounted } from 'vue'
 import { InitialConditions, InitialConditionsInput } from '@/models/InitialConditions'
 
 const props = defineProps({
@@ -10,7 +10,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (e: 'change', conditions: InitialConditions): void
+  (e: 'conditions-change', conditions: InitialConditions): void,
+  (e: 'time-speed-change', speed: number): void
 }>()
 
 function numberValidation(value: string): boolean | string {
@@ -20,7 +21,7 @@ function numberValidation(value: string): boolean | string {
     return "Should be a number"
 }
 
-const timeSpeedMax = 10000
+const timeSpeedMax = 1
 const state = reactive({
   timeSpeed: timeSpeedMax,
   areInputsValid: true,
@@ -38,10 +39,12 @@ onMounted(() => {
 })
 
 function updateConditions() {
-  emit("change", state.conditionsInput.parse());
+  emit("conditions-change", state.conditionsInput.parse())
 }
 
-//TODO: On changes to timeSpeed, emit a speedChange event
+watch(() => state.timeSpeed, function(timeSpeed: number) {
+  emit('time-speed-change', timeSpeed)
+})
 
 </script>
 
