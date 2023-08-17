@@ -11,8 +11,7 @@ const props = defineProps({
     required: true
   },
   initialConditions: {
-    type: InitialConditions,
-    required: true
+    type: InitialConditions
   },
   width: {
     type: Number,
@@ -34,16 +33,18 @@ function sleep(time: number): Promise<void> {
 const DEFAULT_MAX_TIME_UNITS = 100
 const TIME_TICKS_IN_TIME_UNIT = 5000
 
-function findMaxTimeUnits(): number {
-  let commonPeriod = findCommonPeriod(props.initialConditions.x.frequency, props.initialConditions.y.frequency)
+function findMaxTimeUnits(initialConditions: InitialConditions): number {
+  let commonPeriod = findCommonPeriod(initialConditions.x.frequency, initialConditions.y.frequency)
   return commonPeriod || DEFAULT_MAX_TIME_UNITS
 }
 
-async function iterateThroughTime(f: (currentTime: number) => Promise<void>): Promise<void> {
-  let maxTimeunits = findMaxTimeUnits()
-  let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
-  for (let currentTime = 0; currentTime < maxTime; currentTime++) {
-    await f(currentTime / TIME_TICKS_IN_TIME_UNIT)
+async function iterateThroughTime(f: (currentTime: number, initialConditions: InitialConditions) => Promise<void>): Promise<void> {
+  if (props.initialConditions != null) {
+    let maxTimeunits = findMaxTimeUnits(props.initialConditions)
+    let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
+    for (let currentTime = 0; currentTime < maxTime; currentTime++) {
+      await f(currentTime / TIME_TICKS_IN_TIME_UNIT, props.initialConditions)
+    }
   }
 }
 
@@ -56,9 +57,9 @@ async function render(): Promise<void> {
   await canvas.clear()
   const slowdownCoefficient = 1 - props.timeSpeed
   console.log(`slowdownCoefficient = ${slowdownCoefficient}`)
-  iterateThroughTime(async currentTime => {
-    let x = amplitude * Math.cos(props.initialConditions.x.frequency * currentTime + props.initialConditions.x.phase)
-    let y = amplitude * Math.cos(props.initialConditions.y.frequency * currentTime + props.initialConditions.y.phase)
+  iterateThroughTime(async (currentTime, initialConditions) => {
+    let x = amplitude * Math.cos(initialConditions.x.frequency * currentTime + initialConditions.x.phase)
+    let y = amplitude * Math.cos(initialConditions.y.frequency * currentTime + initialConditions.y.phase)
     await canvas.drawPoint(x, y)
     i++;
     if (i == batchSize) {

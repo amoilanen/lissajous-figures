@@ -1,25 +1,20 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 
-import { InitialConditionsInput, InitialConditions, FrequencyAndPhaseInput } from '@/models/InitialConditions';
+import type { InitialConditions } from '@/models/InitialConditions';
 
 import Explanation from "./components/Explanation.vue";
 import Vizualization from "./components/Vizualization.vue";
 import Controls from "./components/Controls.vue";
 
-const initialConditionsInput = new InitialConditionsInput(
-  new FrequencyAndPhaseInput("15", "𝝅/2"),
-  new FrequencyAndPhaseInput("5", "0")
-)
 const canvasDimensions = {
   width: 600,
   height: 600
 }
 
 const state = reactive({
-  timeSpeed: 1,
-  initialConditions: null as (null | InitialConditions),
-  initialConditionsInput: initialConditionsInput
+  timeSpeed: 1, //TODO: Move the default speed value definition to Controls
+  initialConditions: undefined as (undefined | InitialConditions)
 })
 
 function onConditionsChange(initialConditions: InitialConditions) {
@@ -44,7 +39,6 @@ function onTimeSpeedChange(timeSpeed: number) {
                   </v-row>
                   <v-row>
                     <Controls class="mt-10"
-                      :initialConditionsInput="state.initialConditionsInput"
                       @conditionsChange="onConditionsChange"
                       @timeSpeedChange="onTimeSpeedChange"
                     />
@@ -56,7 +50,7 @@ function onTimeSpeedChange(timeSpeed: number) {
                 :width="canvasDimensions.width"
                 :height="canvasDimensions.height"
                 :timeSpeed="state.timeSpeed"
-                :initialConditions="state.initialConditions || state.initialConditionsInput.parse()" />
+                :initialConditions="state.initialConditions" />
             </v-col>
           </v-row>
         </v-container>

@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { reactive, ref, watch, onMounted } from 'vue'
-import { InitialConditions, InitialConditionsInput } from '@/models/InitialConditions'
+import { FrequencyAndPhaseInput, InitialConditions, InitialConditionsInput } from '@/models/InitialConditions'
 
-const props = defineProps({
-  initialConditionsInput: {
-    type: InitialConditionsInput,
-    required: true
-  }
-});
+const initialConditionsInput = new InitialConditionsInput(
+  new FrequencyAndPhaseInput("15", "𝝅/2"),
+  new FrequencyAndPhaseInput("5", "0")
+)
 
 const emit = defineEmits<{
   (e: 'conditions-change', conditions: InitialConditions): void,
@@ -25,7 +23,7 @@ const timeSpeedMax = 1
 const state = reactive({
   timeSpeed: timeSpeedMax,
   areInputsValid: true,
-  conditionsInput: props.initialConditionsInput.clone(),
+  conditionsInput: initialConditionsInput,
   rules: {
     frequency: [ numberValidation ],
     phase: [ numberValidation ]
@@ -36,15 +34,17 @@ const controlsForm = ref<HTMLFormElement | null>(null)
 
 onMounted(() => {
   controlsForm.value!.validate()
+  //TODO: Check that the conditions are valid
+  updateConditions()
 })
 
 function updateConditions() {
   emit("conditions-change", state.conditionsInput.parse())
 }
 
-watch(() => state.timeSpeed, function(timeSpeed: number) {
+watch(() => state.timeSpeed, (timeSpeed: number) =>
   emit('time-speed-change', timeSpeed)
-})
+)
 
 </script>
 
