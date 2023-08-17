@@ -32,18 +32,24 @@ const state = reactive({
 
 const controlsForm = ref<HTMLFormElement | null>(null)
 
-onMounted(() => {
-  controlsForm.value!.validate()
-  //TODO: Check that the conditions are valid
-  updateConditions()
+onMounted(async () => {
+  await controlsForm.value!.validate()
+  if (state.areInputsValid) {
+    updateConditions()
+    updateTimeSpeed()
+  }
 })
 
 function updateConditions() {
   emit("conditions-change", state.conditionsInput.parse())
 }
 
-watch(() => state.timeSpeed, (timeSpeed: number) =>
-  emit('time-speed-change', timeSpeed)
+function updateTimeSpeed() {
+  emit('time-speed-change', state.timeSpeed)
+}
+
+watch(() => state.timeSpeed, () =>
+  updateTimeSpeed()
 )
 
 </script>

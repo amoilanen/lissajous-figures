@@ -13,7 +13,7 @@ const canvasDimensions = {
 }
 
 const state = reactive({
-  timeSpeed: 1, //TODO: Move the default speed value definition to Controls
+  timeSpeed: undefined as (undefined | number),
   initialConditions: undefined as (undefined | InitialConditions)
 })
 

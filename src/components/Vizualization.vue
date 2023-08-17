@@ -7,8 +7,7 @@ import DrawingCanvas from '@/components/DrawingCanvas.vue';
 
 const props = defineProps({
   timeSpeed: {
-    type: Number,
-    required: true
+    type: Number
   },
   initialConditions: {
     type: InitialConditions
@@ -38,12 +37,13 @@ function findMaxTimeUnits(initialConditions: InitialConditions): number {
   return commonPeriod || DEFAULT_MAX_TIME_UNITS
 }
 
-async function iterateThroughTime(f: (currentTime: number, initialConditions: InitialConditions) => Promise<void>): Promise<void> {
-  if (props.initialConditions != null) {
+async function iterateThroughTime(f: (currentTime: number, initialConditions: InitialConditions, slowdownCoefficient: number) => Promise<void>): Promise<void> {
+  if (props.initialConditions != null && props.timeSpeed != null) {
+    const slowdownCoefficient = 1 - props.timeSpeed
     let maxTimeunits = findMaxTimeUnits(props.initialConditions)
     let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
     for (let currentTime = 0; currentTime < maxTime; currentTime++) {
-      await f(currentTime / TIME_TICKS_IN_TIME_UNIT, props.initialConditions)
+      await f(currentTime / TIME_TICKS_IN_TIME_UNIT, props.initialConditions, slowdownCoefficient)
     }
   }
 }
@@ -55,9 +55,7 @@ async function render(): Promise<void> {
   const canvas = canvasRef.value! as typeof DrawingCanvas
   const amplitude = props.width / 2
   await canvas.clear()
-  const slowdownCoefficient = 1 - props.timeSpeed
-  console.log(`slowdownCoefficient = ${slowdownCoefficient}`)
-  iterateThroughTime(async (currentTime, initialConditions) => {
+  iterateThroughTime(async (currentTime, initialConditions, slowdownCoefficient) => {
     let x = amplitude * Math.cos(initialConditions.x.frequency * currentTime + initialConditions.x.phase)
     let y = amplitude * Math.cos(initialConditions.y.frequency * currentTime + initialConditions.y.phase)
     await canvas.drawPoint(x, y)
