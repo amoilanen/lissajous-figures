@@ -33,7 +33,7 @@ async function drawPoint(x: number, y: number, color: string = 'black', size: nu
   let canvasY = y + props.height / 2
 
   let ctx = state.ctx!
-  ctx.fillStyle = 'black';
+  ctx.fillStyle = color;
   ctx.beginPath();
   ctx.arc(canvasX, canvasY, size, 0, 2 * Math.PI);
   ctx.fill();

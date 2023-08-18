@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 
 import { findCommonPeriod } from '@/math/CommonPeriodFinder';
 import { InitialConditions } from '@/models/InitialConditions';
@@ -22,10 +22,22 @@ const props = defineProps({
   }
 })
 
+type VisualizationId = Number
+
+const state = reactive({
+  activeVisualization: null as (VisualizationId | null)
+})
+
 const canvasRef = ref<typeof DrawingCanvas | null>(null)
 
 function sleep(time: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, time));
+}
+
+const MAX_VISUALIZATION_ID = 1000
+
+function createRandomId(): VisualizationId {
+  return Math.floor(Math.random() * MAX_VISUALIZATION_ID)
 }
 
 // Pessimisticly large value to draw the whole curve
@@ -38,17 +50,20 @@ function findMaxTimeUnits(initialConditions: InitialConditions): number {
 }
 
 async function iterateThroughTime(f: (currentTime: number, initialConditions: InitialConditions, slowdownCoefficient: number) => Promise<void>): Promise<void> {
+  const visualizationId = createRandomId()
+  state.activeVisualization = visualizationId
   if (props.initialConditions != null && props.timeSpeed != null) {
     const slowdownCoefficient = 1 - props.timeSpeed
     let maxTimeunits = findMaxTimeUnits(props.initialConditions)
     let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
-    for (let currentTime = 0; currentTime < maxTime; currentTime++) {
+    let currentTime = 0
+    while (state.activeVisualization == visualizationId && currentTime < maxTime) {
       await f(currentTime / TIME_TICKS_IN_TIME_UNIT, props.initialConditions, slowdownCoefficient)
+      currentTime++
     }
   }
 }
 
-//TODO: When changing speed or initial conditions cancel the current drawing which is still going on on the canvas
 async function render(): Promise<void> {
   const batchSize = 50
   let i = 0
