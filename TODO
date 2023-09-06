@@ -4,10 +4,10 @@
 - It is possible to input pi, pi / 2, pi / 4 as inputs - DONE
 - Always use the new composition API, migrate the legacy API usage - DONE
 - It is possible to speed up the simulation: options "normal", "x10", "x100" - DONE
-
-- Bug: When changing speed or initial conditions cancel the current drawing which is still going on on the canvas
+- Bug: When changing speed or initial conditions cancel the current drawing which is still going on on the canvas - DONE
 
 - It is possible to stop the simulation drawing
+- Bug it should be possible to change the speed of drawing "on demand" while the drawing is active
 - It is possible to use one of the pre-selected simulation parameters which would result in an interesting figure
 
 - Clicking the Draw button should terminate the currently ongoing drawing and start a new one

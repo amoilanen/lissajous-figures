@@ -5,6 +5,11 @@ import { findCommonPeriod } from '@/math/CommonPeriodFinder';
 import { InitialConditions } from '@/models/InitialConditions';
 import DrawingCanvas from '@/components/DrawingCanvas.vue';
 
+const emit = defineEmits<{
+  (e: 'started-drawing'): void,
+  (e: 'finished-drawing'): void
+}>()
+
 const props = defineProps({
   timeSpeed: {
     type: Number
@@ -57,10 +62,12 @@ async function iterateThroughTime(f: (currentTime: number, initialConditions: In
     let maxTimeunits = findMaxTimeUnits(props.initialConditions)
     let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
     let currentTime = 0
+    emit('started-drawing')
     while (state.activeVisualization == visualizationId && currentTime < maxTime) {
       await f(currentTime / TIME_TICKS_IN_TIME_UNIT, props.initialConditions, slowdownCoefficient)
       currentTime++
     }
+    emit('finished-drawing')
   }
 }
 

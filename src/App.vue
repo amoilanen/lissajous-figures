@@ -14,11 +14,22 @@ const canvasDimensions = {
 
 const state = reactive({
   timeSpeed: undefined as (undefined | number),
-  initialConditions: undefined as (undefined | InitialConditions)
+  initialConditions: undefined as (undefined | InitialConditions),
+  isDrawing: false as boolean
 })
 
 function onConditionsChange(initialConditions: InitialConditions) {
   state.initialConditions = initialConditions
+}
+
+function onStartedDrawing() {
+  console.log("onStartedDrawing")
+  state.isDrawing = true
+}
+
+function onFinishedDrawing() {
+  console.log("onFinishedDrawing")
+  //state.isDrawing = false
 }
 
 function onTimeSpeedChange(timeSpeed: number) {
@@ -39,6 +50,7 @@ function onTimeSpeedChange(timeSpeed: number) {
                   </v-row>
                   <v-row>
                     <Controls class="mt-10"
+                    :canStopDrawing="state.isDrawing"
                       @conditionsChange="onConditionsChange"
                       @timeSpeedChange="onTimeSpeedChange"
                     />
@@ -50,7 +62,9 @@ function onTimeSpeedChange(timeSpeed: number) {
                 :width="canvasDimensions.width"
                 :height="canvasDimensions.height"
                 :timeSpeed="state.timeSpeed"
-                :initialConditions="state.initialConditions" />
+                :initialConditions="state.initialConditions"
+                @startedDrawing="onStartedDrawing"
+                @finishedDrawing="onFinishedDrawing" />
             </v-col>
           </v-row>
         </v-container>

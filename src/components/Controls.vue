@@ -12,6 +12,12 @@ const emit = defineEmits<{
   (e: 'time-speed-change', speed: number): void
 }>()
 
+const props = defineProps({
+  canStopDrawing: {
+    type: Boolean
+  }
+})
+
 function numberValidation(value: string): boolean | string {
   if (/[\d𝝅\.]+/.test(value))
     return true
@@ -44,8 +50,13 @@ function updateConditions() {
   emit("conditions-change", state.conditionsInput.parse())
 }
 
+function stopDrawing() {
+  //TODO: Implement
+  console.log("Stopping drawing...")
+}
+
 function updateTimeSpeed() {
-  emit('time-speed-change', state.timeSpeed)
+  emit("time-speed-change", state.timeSpeed)
 }
 
 watch(() => state.timeSpeed, () =>
@@ -74,8 +85,11 @@ watch(() => state.timeSpeed, () =>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
+        <v-col cols="2">
           <v-btn @click="updateConditions" :disabled="!state.areInputsValid">Draw</v-btn>
+        </v-col>
+        <v-col cols="2">
+          <v-btn @click="stopDrawing" :disabled="!props.canStopDrawing">Stop</v-btn>
         </v-col>
       </v-row>
       <v-row>
