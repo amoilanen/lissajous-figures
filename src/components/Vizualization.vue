@@ -58,12 +58,12 @@ async function iterateThroughTime(f: (currentTime: number, initialConditions: In
   const visualizationId = createRandomId()
   state.activeVisualization = visualizationId
   if (props.initialConditions != null && props.timeSpeed != null) {
-    const slowdownCoefficient = 1 - props.timeSpeed
     let maxTimeunits = findMaxTimeUnits(props.initialConditions)
     let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
     let currentTime = 0
     emit('started-drawing')
     while (state.activeVisualization == visualizationId && currentTime < maxTime) {
+      const slowdownCoefficient = 1 - props.timeSpeed
       await f(currentTime / TIME_TICKS_IN_TIME_UNIT, props.initialConditions, slowdownCoefficient)
       currentTime++
     }

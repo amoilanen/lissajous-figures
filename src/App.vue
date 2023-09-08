@@ -15,7 +15,7 @@ const canvasDimensions = {
 const state = reactive({
   timeSpeed: undefined as (undefined | number),
   initialConditions: undefined as (undefined | InitialConditions),
-  isDrawing: false as boolean
+  isDrawing: false as boolean,
 })
 
 function onConditionsChange(initialConditions: InitialConditions) {
@@ -23,13 +23,11 @@ function onConditionsChange(initialConditions: InitialConditions) {
 }
 
 function onStartedDrawing() {
-  console.log("onStartedDrawing")
   state.isDrawing = true
 }
 
 function onFinishedDrawing() {
-  console.log("onFinishedDrawing")
-  //state.isDrawing = false
+  state.isDrawing = false
 }
 
 function onTimeSpeedChange(timeSpeed: number) {
