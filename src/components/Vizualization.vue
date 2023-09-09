@@ -2,8 +2,11 @@
 import { reactive, ref, watch } from 'vue'
 
 import { findCommonPeriod } from '@/math/CommonPeriodFinder';
-import { InitialConditions } from '@/models/InitialConditions';
+import type { InitialConditions } from '@/models/InitialConditions';
 import DrawingCanvas from '@/components/DrawingCanvas.vue';
+import { useSimulationStore } from '@/stores/simulation'
+
+const simulationStore = useSimulationStore()
 
 const emit = defineEmits<{
   (e: 'started-drawing'): void,
@@ -13,9 +16,6 @@ const emit = defineEmits<{
 const props = defineProps({
   timeSpeed: {
     type: Number
-  },
-  initialConditions: {
-    type: InitialConditions
   },
   width: {
     type: Number,
@@ -57,14 +57,15 @@ function findMaxTimeUnits(initialConditions: InitialConditions): number {
 async function iterateThroughTime(f: (currentTime: number, initialConditions: InitialConditions, slowdownCoefficient: number) => Promise<void>): Promise<void> {
   const visualizationId = createRandomId()
   state.activeVisualization = visualizationId
-  if (props.initialConditions != null && props.timeSpeed != null) {
-    let maxTimeunits = findMaxTimeUnits(props.initialConditions)
+  const conditions = simulationStore.conditions
+  if (conditions != null && props.timeSpeed != null) {
+    let maxTimeunits = findMaxTimeUnits(conditions)
     let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
     let currentTime = 0
     emit('started-drawing')
     while (state.activeVisualization == visualizationId && currentTime < maxTime) {
       const slowdownCoefficient = 1 - props.timeSpeed
-      await f(currentTime / TIME_TICKS_IN_TIME_UNIT, props.initialConditions, slowdownCoefficient)
+      await f(currentTime / TIME_TICKS_IN_TIME_UNIT, conditions, slowdownCoefficient)
       currentTime++
     }
     emit('finished-drawing')
@@ -91,7 +92,7 @@ async function render(): Promise<void> {
   })
 }
 
-watch(() => props.initialConditions, function(newVal, oldVal) {
+watch(() => simulationStore.conditions, function(newVal, oldVal) {
   render()
 })
 </script>

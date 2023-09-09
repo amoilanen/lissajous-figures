@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { reactive, ref, watch, onMounted } from 'vue'
 import { FrequencyAndPhaseInput, InitialConditions, InitialConditionsInput } from '@/models/InitialConditions'
+import { useSimulationStore } from '@/stores/simulation'
+
+const simulationStore = useSimulationStore()
 
 const initialConditionsInput = new InitialConditionsInput(
   new FrequencyAndPhaseInput("15", "𝝅/2"),
@@ -8,7 +11,6 @@ const initialConditionsInput = new InitialConditionsInput(
 )
 
 const emit = defineEmits<{
-  (e: 'conditions-change', conditions: InitialConditions): void,
   (e: 'time-speed-change', speed: number): void
 }>()
 
@@ -47,7 +49,7 @@ onMounted(async () => {
 })
 
 function updateConditions() {
-  emit("conditions-change", state.conditionsInput.parse())
+  simulationStore.updateConditions(state.conditionsInput.parse())
 }
 
 function stopDrawing() {

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 
-import type { InitialConditions } from '@/models/InitialConditions';
-
 import Explanation from "./components/Explanation.vue";
 import Vizualization from "./components/Vizualization.vue";
 import Controls from "./components/Controls.vue";
@@ -14,13 +12,8 @@ const canvasDimensions = {
 
 const state = reactive({
   timeSpeed: undefined as (undefined | number),
-  initialConditions: undefined as (undefined | InitialConditions),
   isDrawing: false as boolean,
 })
-
-function onConditionsChange(initialConditions: InitialConditions) {
-  state.initialConditions = initialConditions
-}
 
 function onStartedDrawing() {
   state.isDrawing = true
@@ -49,7 +42,6 @@ function onTimeSpeedChange(timeSpeed: number) {
                   <v-row>
                     <Controls class="mt-10"
                     :canStopDrawing="state.isDrawing"
-                      @conditionsChange="onConditionsChange"
                       @timeSpeedChange="onTimeSpeedChange"
                     />
                   </v-row>
@@ -60,7 +52,6 @@ function onTimeSpeedChange(timeSpeed: number) {
                 :width="canvasDimensions.width"
                 :height="canvasDimensions.height"
                 :timeSpeed="state.timeSpeed"
-                :initialConditions="state.initialConditions"
                 @startedDrawing="onStartedDrawing"
                 @finishedDrawing="onFinishedDrawing" />
             </v-col>
