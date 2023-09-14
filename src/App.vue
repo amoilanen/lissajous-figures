@@ -11,7 +11,6 @@ const canvasDimensions = {
 }
 
 const state = reactive({
-  timeSpeed: undefined as (undefined | number),
   isDrawing: false as boolean,
 })
 
@@ -21,10 +20,6 @@ function onStartedDrawing() {
 
 function onFinishedDrawing() {
   state.isDrawing = false
-}
-
-function onTimeSpeedChange(timeSpeed: number) {
-  state.timeSpeed = timeSpeed
 }
 </script>
 
@@ -42,7 +37,6 @@ function onTimeSpeedChange(timeSpeed: number) {
                   <v-row>
                     <Controls class="mt-10"
                     :canStopDrawing="state.isDrawing"
-                      @timeSpeedChange="onTimeSpeedChange"
                     />
                   </v-row>
               </v-container>
@@ -51,7 +45,6 @@ function onTimeSpeedChange(timeSpeed: number) {
               <Vizualization
                 :width="canvasDimensions.width"
                 :height="canvasDimensions.height"
-                :timeSpeed="state.timeSpeed"
                 @startedDrawing="onStartedDrawing"
                 @finishedDrawing="onFinishedDrawing" />
             </v-col>

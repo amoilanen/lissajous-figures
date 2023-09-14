@@ -8,14 +8,15 @@ const initialConditionsInput = new InitialConditionsInput(
   new FrequencyAndPhaseInput("5", "0")
 )
 
-
 export const useSimulationStore = defineStore('simulationStore', () => {
   const conditions = ref(null as InitialConditions | null)
   const conditionsInput = ref(initialConditionsInput)
+  const timeSpeedMax = 1
+  const timeSpeed = ref(timeSpeedMax)
 
   function updateConditions() {
     conditions.value = conditionsInput.value.parse()
   }
 
-  return { conditions, conditionsInput, updateConditions }
+  return { conditions, conditionsInput, timeSpeed, timeSpeedMax, updateConditions }
 })

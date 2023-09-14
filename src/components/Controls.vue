@@ -21,9 +21,7 @@ function numberValidation(value: string): boolean | string {
     return "Should be a number"
 }
 
-const timeSpeedMax = 1
 const state = reactive({
-  timeSpeed: timeSpeedMax,
   areInputsValid: true
 })
 
@@ -38,7 +36,6 @@ onMounted(async () => {
   await controlsForm.value!.validate()
   if (state.areInputsValid) {
     simulationStore.updateConditions()
-    updateTimeSpeed()
   }
 })
 
@@ -46,15 +43,6 @@ function stopDrawing() {
   //TODO: Implement
   console.log("Stopping drawing...")
 }
-
-function updateTimeSpeed() {
-  emit("time-speed-change", state.timeSpeed)
-}
-
-watch(() => state.timeSpeed, () =>
-  updateTimeSpeed()
-)
-
 </script>
 
 <template>
@@ -92,9 +80,9 @@ watch(() => state.timeSpeed, () =>
             class="text-caption"
             text="Time speed:" />
           <v-slider
-            v-model="state.timeSpeed"
+            v-model="simulationStore.timeSpeed"
             :min="0"
-            :max="timeSpeedMax">
+            :max="simulationStore.timeSpeedMax">
             <template v-slot:prepend>
               <v-label
                 text="min"

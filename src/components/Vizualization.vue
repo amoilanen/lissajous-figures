@@ -14,9 +14,6 @@ const emit = defineEmits<{
 }>()
 
 const props = defineProps({
-  timeSpeed: {
-    type: Number
-  },
   width: {
     type: Number,
     required: true
@@ -58,13 +55,13 @@ async function iterateThroughTime(f: (currentTime: number, initialConditions: In
   const visualizationId = createRandomId()
   state.activeVisualization = visualizationId
   const conditions = simulationStore.conditions
-  if (conditions != null && props.timeSpeed != null) {
+  if (conditions != null && simulationStore.timeSpeed != null) {
     let maxTimeunits = findMaxTimeUnits(conditions)
     let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
     let currentTime = 0
     emit('started-drawing')
     while (state.activeVisualization == visualizationId && currentTime < maxTime) {
-      const slowdownCoefficient = 1 - props.timeSpeed
+      const slowdownCoefficient = 1 - simulationStore.timeSpeed
       await f(currentTime / TIME_TICKS_IN_TIME_UNIT, conditions, slowdownCoefficient)
       currentTime++
     }
