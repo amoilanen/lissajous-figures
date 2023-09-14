@@ -8,11 +8,6 @@ import { useSimulationStore } from '@/stores/simulation'
 
 const simulationStore = useSimulationStore()
 
-const emit = defineEmits<{
-  (e: 'started-drawing'): void,
-  (e: 'finished-drawing'): void
-}>()
-
 const props = defineProps({
   width: {
     type: Number,
@@ -59,13 +54,13 @@ async function iterateThroughTime(f: (currentTime: number, initialConditions: In
     let maxTimeunits = findMaxTimeUnits(conditions)
     let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
     let currentTime = 0
-    emit('started-drawing')
+    simulationStore.startedDrawing()
     while (state.activeVisualization == visualizationId && currentTime < maxTime) {
       const slowdownCoefficient = 1 - simulationStore.timeSpeed
       await f(currentTime / TIME_TICKS_IN_TIME_UNIT, conditions, slowdownCoefficient)
       currentTime++
     }
-    emit('finished-drawing')
+    simulationStore.finishedDrawing()
   }
 }
 

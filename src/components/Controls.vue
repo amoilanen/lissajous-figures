@@ -4,16 +4,6 @@ import { useSimulationStore } from '@/stores/simulation'
 
 const simulationStore = useSimulationStore()
 
-const emit = defineEmits<{
-  (e: 'time-speed-change', speed: number): void
-}>()
-
-const props = defineProps({
-  canStopDrawing: {
-    type: Boolean
-  }
-})
-
 function numberValidation(value: string): boolean | string {
   if (/[\d𝝅\.]+/.test(value))
     return true
@@ -69,7 +59,7 @@ function stopDrawing() {
           <v-btn @click="simulationStore.updateConditions" :disabled="!state.areInputsValid">Draw</v-btn>
         </v-col>
         <v-col cols="2">
-          <v-btn @click="stopDrawing" :disabled="!props.canStopDrawing">Stop</v-btn>
+          <v-btn @click="stopDrawing" :disabled="simulationStore.isDrawing">Stop</v-btn>
         </v-col>
       </v-row>
       <v-row>

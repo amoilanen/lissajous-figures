@@ -13,10 +13,19 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   const conditionsInput = ref(initialConditionsInput)
   const timeSpeedMax = 1
   const timeSpeed = ref(timeSpeedMax)
+  const isDrawing = ref(false)
 
   function updateConditions() {
     conditions.value = conditionsInput.value.parse()
   }
 
-  return { conditions, conditionsInput, timeSpeed, timeSpeedMax, updateConditions }
+  function startedDrawing() {
+    isDrawing.value = true
+  }
+
+  function finishedDrawing() {
+    isDrawing.value = false
+  }
+
+  return { conditions, conditionsInput, timeSpeed, timeSpeedMax, isDrawing, startedDrawing, finishedDrawing, updateConditions }
 })

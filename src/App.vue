@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
-
 import Explanation from "./components/Explanation.vue";
 import Vizualization from "./components/Vizualization.vue";
 import Controls from "./components/Controls.vue";
@@ -8,18 +6,6 @@ import Controls from "./components/Controls.vue";
 const canvasDimensions = {
   width: 600,
   height: 600
-}
-
-const state = reactive({
-  isDrawing: false as boolean,
-})
-
-function onStartedDrawing() {
-  state.isDrawing = true
-}
-
-function onFinishedDrawing() {
-  state.isDrawing = false
 }
 </script>
 
@@ -35,18 +21,14 @@ function onFinishedDrawing() {
                     <Explanation />
                   </v-row>
                   <v-row>
-                    <Controls class="mt-10"
-                    :canStopDrawing="state.isDrawing"
-                    />
+                    <Controls class="mt-10" />
                   </v-row>
               </v-container>
             </v-col>
             <v-col cols="8">
               <Vizualization
                 :width="canvasDimensions.width"
-                :height="canvasDimensions.height"
-                @startedDrawing="onStartedDrawing"
-                @finishedDrawing="onFinishedDrawing" />
+                :height="canvasDimensions.height" />
             </v-col>
           </v-row>
         </v-container>
