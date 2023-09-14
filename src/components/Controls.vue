@@ -24,12 +24,13 @@ function numberValidation(value: string): boolean | string {
 const timeSpeedMax = 1
 const state = reactive({
   timeSpeed: timeSpeedMax,
-  areInputsValid: true,
-  rules: {
-    frequency: [ numberValidation ],
-    phase: [ numberValidation ]
-  }
+  areInputsValid: true
 })
+
+const validationRules = {
+  frequency: [ numberValidation ],
+  phase: [ numberValidation ]
+}
 
 const controlsForm = ref<HTMLFormElement | null>(null)
 
@@ -61,18 +62,18 @@ watch(() => state.timeSpeed, () =>
     <v-container class="controls">
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="simulationStore.conditionsInput.x.phase" :rules="state.rules.phase" label="x initial phase"></v-text-field>
+          <v-text-field v-model="simulationStore.conditionsInput.x.phase" :rules="validationRules.phase" label="x initial phase"></v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="simulationStore.conditionsInput.x.frequency" :rules="state.rules.frequency" label="x frequency"></v-text-field>
+          <v-text-field v-model="simulationStore.conditionsInput.x.frequency" :rules="validationRules.frequency" label="x frequency"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="simulationStore.conditionsInput.y.phase" :rules="state.rules.phase" label="y initial phase"></v-text-field>
+          <v-text-field v-model="simulationStore.conditionsInput.y.phase" :rules="validationRules.phase" label="y initial phase"></v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="simulationStore.conditionsInput.y.frequency" :rules="state.rules.frequency" label="y frequency"></v-text-field>
+          <v-text-field v-model="simulationStore.conditionsInput.y.frequency" :rules="validationRules.frequency" label="y frequency"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
