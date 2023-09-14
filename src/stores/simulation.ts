@@ -1,14 +1,21 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-import type { InitialConditions } from '@/models/InitialConditions'
+import { FrequencyAndPhaseInput, InitialConditions, InitialConditionsInput } from '@/models/InitialConditions'
+
+const initialConditionsInput = new InitialConditionsInput(
+  new FrequencyAndPhaseInput("15", "𝝅/2"),
+  new FrequencyAndPhaseInput("5", "0")
+)
+
 
 export const useSimulationStore = defineStore('simulationStore', () => {
   const conditions = ref(null as InitialConditions | null)
+  const conditionsInput = ref(initialConditionsInput)
 
-  function updateConditions(updated: InitialConditions): void {
-    conditions.value = updated
+  function updateConditions() {
+    conditions.value = conditionsInput.value.parse()
   }
 
-  return { conditions, updateConditions }
+  return { conditions, conditionsInput, updateConditions }
 })
