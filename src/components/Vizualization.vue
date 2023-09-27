@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia';
 
 import { findCommonPeriod } from '@/math/CommonPeriodFinder';
 import type { InitialConditions } from '@/models/InitialConditions';
@@ -7,6 +8,9 @@ import DrawingCanvas from '@/components/DrawingCanvas.vue';
 import { useSimulationStore } from '@/stores/simulation'
 
 const simulationStore = useSimulationStore()
+
+const { startedDrawing, finishedDrawing } = simulationStore
+const { conditions, timeSpeed } = storeToRefs(simulationStore)
 
 const props = defineProps({
   width: {
@@ -49,18 +53,17 @@ function findMaxTimeUnits(initialConditions: InitialConditions): number {
 async function iterateThroughTime(f: (currentTime: number, initialConditions: InitialConditions, slowdownCoefficient: number) => Promise<void>): Promise<void> {
   const visualizationId = createRandomId()
   state.activeVisualization = visualizationId
-  const conditions = simulationStore.conditions
-  if (conditions != null && simulationStore.timeSpeed != null) {
-    let maxTimeunits = findMaxTimeUnits(conditions)
+  if (conditions.value != null && timeSpeed != null) {
+    let maxTimeunits = findMaxTimeUnits(conditions.value)
     let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
     let currentTime = 0
-    simulationStore.startedDrawing()
+    startedDrawing()
     while (state.activeVisualization == visualizationId && currentTime < maxTime) {
-      const slowdownCoefficient = 1 - simulationStore.timeSpeed
-      await f(currentTime / TIME_TICKS_IN_TIME_UNIT, conditions, slowdownCoefficient)
+      const slowdownCoefficient = 1 - timeSpeed.value
+      await f(currentTime / TIME_TICKS_IN_TIME_UNIT, conditions.value, slowdownCoefficient)
       currentTime++
     }
-    simulationStore.finishedDrawing()
+    finishedDrawing()
   }
 }
 
