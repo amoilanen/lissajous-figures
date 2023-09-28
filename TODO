@@ -8,8 +8,10 @@
 - Bug it should be possible to change the speed of drawing "on demand" while the drawing is active - DONE
 - Clicking the Draw button should terminate the currently ongoing drawing and start a new one - DONE
 - Add state management with Pinia - DONE
+- It is possible to stop the simulation drawing - DONE
 
-- It is possible to stop the simulation drawing
+- Add the Resume button to resume the drawing of the simulation (or even better: change the state of the Stop button to Resume)
+
 - It is possible to use one of the pre-selected simulation parameters which would result in an interesting figure
 
 - Add unit tests for components using vitest and vue-test-utils

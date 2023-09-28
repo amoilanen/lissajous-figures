@@ -17,7 +17,7 @@ const validationRules = {
 }
 
 const { conditionsInput, isDrawing, timeSpeed } = storeToRefs(simulationStore)
-const { timeSpeedMax, draw } = simulationStore
+const { timeSpeedMax, draw, stopDrawing } = simulationStore
 
 const controlsForm = ref<HTMLFormElement | null>(null)
 
@@ -27,11 +27,6 @@ onMounted(async () => {
     draw()
   }
 })
-
-function stopDrawing() {
-  //TODO: Implement
-  console.log("Stopping drawing...")
-}
 </script>
 
 <template>

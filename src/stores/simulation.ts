@@ -37,6 +37,11 @@ export const useSimulationStore = defineStore('simulationStore', () => {
     activeVisualization.value = createRandomVisualizationId()
   }
 
+  function stopDrawing() {
+    setDrawingState(DrawingState.Stopped)
+    activeVisualization.value = null
+  }
+
   function finishedDrawing() {
     setDrawingState(DrawingState.Finished)
   }
@@ -68,5 +73,5 @@ export const useSimulationStore = defineStore('simulationStore', () => {
     }
   }
 
-  return { conditions, conditionsInput, drawingState, activeVisualization, timeSpeed, timeSpeedMax, isDrawing, finishedDrawing, draw }
+  return { conditions, conditionsInput, drawingState, activeVisualization, timeSpeed, timeSpeedMax, isDrawing, finishedDrawing, draw, stopDrawing }
 })

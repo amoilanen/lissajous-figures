@@ -55,7 +55,7 @@ async function iterateThroughTime(f: (currentTime: number, initialConditions: In
   }
 }
 
-async function draw(): Promise<void> {
+async function visualize(): Promise<void> {
   const batchSize = 50
   let i = 0
   const canvas = canvasRef.value! as typeof DrawingCanvas
@@ -76,8 +76,8 @@ async function draw(): Promise<void> {
 }
 
 watch(() => simulationStore.activeVisualization, function(newVal, oldVal) {
-  if (newVal != oldVal) {
-    draw()
+  if (newVal != oldVal && simulationStore.isDrawing) {
+    visualize()
   }
 })
 </script>
