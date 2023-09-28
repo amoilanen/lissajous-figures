@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 import { FrequencyAndPhaseInput, InitialConditions, InitialConditionsInput } from '@/models/InitialConditions'
+import type { VisualizationId } from '@/utils/VisualizationId'
+import { createRandomVisualizationId } from '@/utils/VisualizationId'
 
 const initialConditionsInput = new InitialConditionsInput(
   new FrequencyAndPhaseInput("15", "𝝅/2"),
@@ -16,6 +18,7 @@ export enum DrawingState {
 }
 
 export const useSimulationStore = defineStore('simulationStore', () => {
+  const activeVisualization = ref(null as (VisualizationId | null))
   const conditions = ref(null as InitialConditions | null)
   const conditionsInput = ref(initialConditionsInput)
   const timeSpeedMax = 1
@@ -24,16 +27,18 @@ export const useSimulationStore = defineStore('simulationStore', () => {
 
   const drawingState = ref(DrawingState.Initial)
 
-  function updateConditions() {
-    conditions.value = conditionsInput.value.parse()
-  }
-
-  function startedDrawing() {
+  function draw() {
     setDrawingState(DrawingState.Started)
+    updateConditions()
+    activeVisualization.value = createRandomVisualizationId()
   }
 
   function finishedDrawing() {
     setDrawingState(DrawingState.Finished)
+  }
+
+  function updateConditions() {
+    conditions.value = conditionsInput.value.parse()
   }
 
   function setDrawingState(newState: DrawingState) {
@@ -59,5 +64,5 @@ export const useSimulationStore = defineStore('simulationStore', () => {
     }
   }
 
-  return { conditions, conditionsInput, drawingState, timeSpeed, timeSpeedMax, isDrawing, startedDrawing, finishedDrawing, updateConditions }
+  return { conditions, conditionsInput, drawingState, activeVisualization, timeSpeed, timeSpeedMax, isDrawing, finishedDrawing, draw }
 })

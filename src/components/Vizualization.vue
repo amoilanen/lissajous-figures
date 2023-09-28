@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue'
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from 'pinia'
 
-import { findCommonPeriod } from '@/math/CommonPeriodFinder';
-import type { InitialConditions } from '@/models/InitialConditions';
-import DrawingCanvas from '@/components/DrawingCanvas.vue';
+import { findCommonPeriod } from '@/math/CommonPeriodFinder'
+import type { InitialConditions } from '@/models/InitialConditions'
+import DrawingCanvas from '@/components/DrawingCanvas.vue'
 import { useSimulationStore } from '@/stores/simulation'
 
 const simulationStore = useSimulationStore()
 
-const { startedDrawing, finishedDrawing } = simulationStore
+const { finishedDrawing } = simulationStore
 const { conditions, timeSpeed } = storeToRefs(simulationStore)
 
 const props = defineProps({
@@ -23,22 +23,10 @@ const props = defineProps({
   }
 })
 
-type VisualizationId = Number
-
-const state = reactive({
-  activeVisualization: null as (VisualizationId | null)
-})
-
 const canvasRef = ref<typeof DrawingCanvas | null>(null)
 
 function sleep(time: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, time));
-}
-
-const MAX_VISUALIZATION_ID = 1000
-
-function createRandomId(): VisualizationId {
-  return Math.floor(Math.random() * MAX_VISUALIZATION_ID)
 }
 
 // Pessimisticly large value to draw the whole curve
@@ -51,23 +39,20 @@ function findMaxTimeUnits(initialConditions: InitialConditions): number {
 }
 
 async function iterateThroughTime(f: (currentTime: number, initialConditions: InitialConditions, slowdownCoefficient: number) => Promise<void>): Promise<void> {
-  const visualizationId = createRandomId()
-  state.activeVisualization = visualizationId
+  const visualizationId = simulationStore.activeVisualization
   if (conditions.value != null && timeSpeed != null) {
     let maxTimeunits = findMaxTimeUnits(conditions.value)
     let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
     let currentTime = 0
-    startedDrawing()
-    while (state.activeVisualization == visualizationId && currentTime < maxTime) {
+    while (simulationStore.activeVisualization == visualizationId && currentTime < maxTime) {
       const slowdownCoefficient = 1 - timeSpeed.value
       await f(currentTime / TIME_TICKS_IN_TIME_UNIT, conditions.value, slowdownCoefficient)
       currentTime++
     }
-    finishedDrawing()
   }
 }
 
-async function render(): Promise<void> {
+async function draw(): Promise<void> {
   const batchSize = 50
   let i = 0
   const canvas = canvasRef.value! as typeof DrawingCanvas
@@ -85,10 +70,11 @@ async function render(): Promise<void> {
       i = 0
     }
   })
+  finishedDrawing()
 }
 
 watch(() => simulationStore.conditions, function(newVal, oldVal) {
-  render()
+  draw()
 })
 </script>
 

@@ -17,14 +17,14 @@ const validationRules = {
 }
 
 const { conditionsInput, isDrawing, timeSpeed } = storeToRefs(simulationStore)
-const { timeSpeedMax, updateConditions } = simulationStore
+const { timeSpeedMax, draw } = simulationStore
 
 const controlsForm = ref<HTMLFormElement | null>(null)
 
 onMounted(async () => {
   await controlsForm.value!.validate()
   if (state.areInputsValid) {
-    updateConditions()
+    draw()
   }
 })
 
@@ -55,7 +55,7 @@ function stopDrawing() {
       </v-row>
       <v-row>
         <v-col cols="2">
-          <v-btn @click="updateConditions" :disabled="!state.areInputsValid">Draw</v-btn>
+          <v-btn @click="draw" :disabled="!state.areInputsValid">Draw</v-btn>
         </v-col>
         <v-col cols="2">
           <v-btn @click="stopDrawing" :disabled="!isDrawing">Stop</v-btn>
