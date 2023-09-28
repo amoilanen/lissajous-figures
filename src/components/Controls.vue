@@ -58,7 +58,7 @@ function stopDrawing() {
           <v-btn @click="updateConditions" :disabled="!state.areInputsValid">Draw</v-btn>
         </v-col>
         <v-col cols="2">
-          <v-btn @click="stopDrawing" :disabled="isDrawing">Stop</v-btn>
+          <v-btn @click="stopDrawing" :disabled="!isDrawing">Stop</v-btn>
         </v-col>
       </v-row>
       <v-row>
