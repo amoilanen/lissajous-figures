@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { findCommonPeriod } from '@/math/CommonPeriodFinder'
 import type { InitialConditions } from '@/models/InitialConditions'
 import DrawingCanvas from '@/components/DrawingCanvas.vue'
-import { useSimulationStore } from '@/stores/simulation'
+import { useSimulationStore, DrawingState } from '@/stores/simulation'
 
 const simulationStore = useSimulationStore()
 
@@ -49,6 +49,9 @@ async function iterateThroughTime(f: (currentTime: number, initialConditions: In
       await f(currentTime / TIME_TICKS_IN_TIME_UNIT, conditions.value, slowdownCoefficient)
       currentTime++
     }
+    if (simulationStore.activeVisualization == visualizationId) {
+      finishedDrawing()
+    }
   }
 }
 
@@ -70,11 +73,12 @@ async function draw(): Promise<void> {
       i = 0
     }
   })
-  finishedDrawing()
 }
 
-watch(() => simulationStore.conditions, function(newVal, oldVal) {
-  draw()
+watch(() => simulationStore.activeVisualization, function(newVal, oldVal) {
+  if (newVal != oldVal) {
+    draw()
+  }
 })
 </script>
 
