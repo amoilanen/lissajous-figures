@@ -51,25 +51,25 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   }
 
   function setDrawingState(newState: DrawingState) {
-    let isInvalidTransition = false
+    let isValidTransition = false
     switch (drawingState.value) {
       case DrawingState.Initial:
-        isInvalidTransition = newState != DrawingState.Started
+        isValidTransition = newState == DrawingState.Started
         break
       case DrawingState.Started:
-        isInvalidTransition = !(newState == DrawingState.Stopped || newState == DrawingState.Finished)
+        isValidTransition = newState == DrawingState.Stopped || newState == DrawingState.Finished
         break
       case DrawingState.Finished:
-        isInvalidTransition = newState != DrawingState.Started
+        isValidTransition = newState == DrawingState.Started
         break
       case DrawingState.Stopped:
-        isInvalidTransition = newState != DrawingState.Started
+        isValidTransition = newState == DrawingState.Started
         break
     }
-    if (isInvalidTransition) {
-      throw new Error(`Invalid drawing state transition ${drawingState.value} -> ${newState}`)
-    } else {
+    if (isValidTransition) {
       drawingState.value = newState
+    } else {
+      throw new Error(`Invalid drawing state transition ${drawingState.value} -> ${newState}`)
     }
   }
 
