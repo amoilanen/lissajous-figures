@@ -50,22 +50,15 @@ export const useSimulationStore = defineStore('simulationStore', () => {
     conditions.value = conditionsInput.value.parse()
   }
 
+  const VALID_TRANSITIONS = {
+    [DrawingState.Initial]: [DrawingState.Started],
+    [DrawingState.Started]: [DrawingState.Stopped, DrawingState.Finished],
+    [DrawingState.Finished]: [DrawingState.Started],
+    [DrawingState.Stopped]: [DrawingState.Started]
+  }
+
   function setDrawingState(newState: DrawingState) {
-    let isValidTransition = false
-    switch (drawingState.value) {
-      case DrawingState.Initial:
-        isValidTransition = newState == DrawingState.Started
-        break
-      case DrawingState.Started:
-        isValidTransition = newState == DrawingState.Stopped || newState == DrawingState.Finished
-        break
-      case DrawingState.Finished:
-        isValidTransition = newState == DrawingState.Started
-        break
-      case DrawingState.Stopped:
-        isValidTransition = newState == DrawingState.Started
-        break
-    }
+    const isValidTransition = VALID_TRANSITIONS[drawingState.value]?.indexOf(newState) >= 0
     if (isValidTransition) {
       drawingState.value = newState
     } else {
