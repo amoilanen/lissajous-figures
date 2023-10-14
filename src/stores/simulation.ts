@@ -13,6 +13,7 @@ const initialConditionsInput = new InitialConditionsInput(
 export enum DrawingState {
   Initial = "Initial",
   Started = "Started",
+  Resumed = "Resumed",
   Finished = "Finished",
   Stopped = "Stopped"
 }
@@ -39,7 +40,6 @@ export const useSimulationStore = defineStore('simulationStore', () => {
 
   function stopDrawing() {
     setDrawingState(DrawingState.Stopped)
-    activeVisualization.value = null
   }
 
   function finishedDrawing() {
@@ -53,8 +53,9 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   const VALID_TRANSITIONS = {
     [DrawingState.Initial]: [DrawingState.Started],
     [DrawingState.Started]: [DrawingState.Stopped, DrawingState.Finished],
-    [DrawingState.Finished]: [DrawingState.Started],
-    [DrawingState.Stopped]: [DrawingState.Started]
+    [DrawingState.Resumed]: [DrawingState.Stopped, DrawingState.Finished],
+    [DrawingState.Stopped]: [DrawingState.Started, DrawingState.Resumed],
+    [DrawingState.Finished]: [DrawingState.Started]
   }
 
   function setDrawingState(newState: DrawingState) {

@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { findCommonPeriod } from '@/math/CommonPeriodFinder'
 import type { InitialConditions } from '@/models/InitialConditions'
 import DrawingCanvas from '@/components/DrawingCanvas.vue'
-import { useSimulationStore, DrawingState } from '@/stores/simulation'
+import { DrawingState, useSimulationStore } from '@/stores/simulation'
 
 const simulationStore = useSimulationStore()
 
 const { finishedDrawing } = simulationStore
-const { conditions, timeSpeed } = storeToRefs(simulationStore)
+const { conditions, isDrawing, timeSpeed } = storeToRefs(simulationStore)
 
 const props = defineProps({
   width: {
@@ -25,6 +25,11 @@ const props = defineProps({
 
 const canvasRef = ref<typeof DrawingCanvas | null>(null)
 
+const state = reactive({
+  currentTime: 0,
+  maxTime: 0
+})
+
 function sleep(time: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, time));
 }
@@ -38,46 +43,65 @@ function findMaxTimeUnits(initialConditions: InitialConditions): number {
   return commonPeriod || DEFAULT_MAX_TIME_UNITS
 }
 
+//TODO: Inline to continueDrawing?
 async function iterateThroughTime(f: (currentTime: number, initialConditions: InitialConditions, slowdownCoefficient: number) => Promise<void>): Promise<void> {
   const visualizationId = simulationStore.activeVisualization
   if (conditions.value != null && timeSpeed != null) {
-    let maxTimeunits = findMaxTimeUnits(conditions.value)
-    let maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
-    let currentTime = 0
-    while (simulationStore.activeVisualization == visualizationId && currentTime < maxTime) {
+    while (isDrawing && simulationStore.activeVisualization == visualizationId && state.currentTime < state.maxTime) {
       const slowdownCoefficient = 1 - timeSpeed.value
-      await f(currentTime / TIME_TICKS_IN_TIME_UNIT, conditions.value, slowdownCoefficient)
-      currentTime++
+      await f(state.currentTime / TIME_TICKS_IN_TIME_UNIT, conditions.value, slowdownCoefficient)
+      state.currentTime++
     }
-    if (simulationStore.activeVisualization == visualizationId) {
+    if (simulationStore.activeVisualization == visualizationId && state.currentTime >= state.maxTime) {
       finishedDrawing()
     }
   }
 }
 
-async function visualize(): Promise<void> {
+async function continueDrawing(canvas: typeof DrawingCanvas) {
   const batchSize = 50
-  let i = 0
-  const canvas = canvasRef.value! as typeof DrawingCanvas
   const amplitude = props.width / 2
-  await canvas.clear()
-  iterateThroughTime(async (currentTime, initialConditions, slowdownCoefficient) => {
-    let x = amplitude * Math.cos(initialConditions.x.frequency * currentTime + initialConditions.x.phase)
-    let y = amplitude * Math.cos(initialConditions.y.frequency * currentTime + initialConditions.y.phase)
-    await canvas.drawPoint(x, y)
-    i++;
-    if (i == batchSize) {
-      if (slowdownCoefficient > 0) {
-        await sleep(slowdownCoefficient * 1000)
+  let i = 0
+  return iterateThroughTime(async (currentTime, initialConditions, slowdownCoefficient) => {
+      let x = amplitude * Math.cos(initialConditions.x.frequency * currentTime + initialConditions.x.phase)
+      let y = amplitude * Math.cos(initialConditions.y.frequency * currentTime + initialConditions.y.phase)
+      await canvas.drawPoint(x, y)
+      i++;
+      if (i == batchSize) {
+        if (slowdownCoefficient > 0) {
+          await sleep(slowdownCoefficient * 1000)
+        }
+        i = 0
       }
-      i = 0
-    }
-  })
+    })
 }
 
+async function startDrawing(): Promise<void> {
+  const canvas = canvasRef.value! as typeof DrawingCanvas
+  await canvas.clear()
+  if (conditions.value != null && timeSpeed != null) {
+    let maxTimeunits = findMaxTimeUnits(conditions.value)
+    state.maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
+    state.currentTime = 0
+    continueDrawing(canvas)
+  }
+}
+
+async function resumeDrawing(): Promise<void> {
+  const canvas = canvasRef.value! as typeof DrawingCanvas
+  continueDrawing(canvas)
+}
+
+//TODO: Migrate the code from this watch to the next watch
 watch(() => simulationStore.activeVisualization, function(newVal, oldVal) {
   if (newVal != oldVal && simulationStore.isDrawing) {
-    visualize()
+    startDrawing()
+  }
+})
+
+watch(() => simulationStore.drawingState, function(newValue, oldValue) {
+  if (oldValue == DrawingState.Stopped && newValue == DrawingState.Resumed) {
+    resumeDrawing()
   }
 })
 </script>
