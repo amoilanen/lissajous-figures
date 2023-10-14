@@ -15,7 +15,7 @@ const validationRules = {
   phase: [ numberValidation ]
 }
 
-const { conditionsInput, isDrawing, timeSpeed, drawingState } = storeToRefs(simulationStore)
+const { conditionsInput, timeSpeed, drawingState } = storeToRefs(simulationStore)
 const { timeSpeedMax, draw, stopDrawing, resumeDrawing } = simulationStore
 
 const controlsForm = ref<HTMLFormElement | null>(null)

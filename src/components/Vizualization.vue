@@ -92,15 +92,10 @@ async function resumeDrawing(): Promise<void> {
   continueDrawing(canvas)
 }
 
-//TODO: Migrate the code from this watch to the next watch
-watch(() => simulationStore.activeVisualization, function(newVal, oldVal) {
-  if (newVal != oldVal && simulationStore.isDrawing) {
+watch(() => simulationStore.drawingState, function(state) {
+  if (state == DrawingState.Started) {
     startDrawing()
-  }
-})
-
-watch(() => simulationStore.drawingState, function(newValue, oldValue) {
-  if (oldValue == DrawingState.Stopped && newValue == DrawingState.Resumed) {
+  } else if (state == DrawingState.Resumed) {
     resumeDrawing()
   }
 })
