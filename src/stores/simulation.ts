@@ -24,7 +24,7 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   const conditionsInput = ref(initialConditionsInput)
   const timeSpeedMax = 1
   const timeSpeed = ref(timeSpeedMax)
-  const isDrawing = computed(() => drawingState.value == DrawingState.Started)
+  const isDrawing = computed(() => [DrawingState.Started, DrawingState.Resumed].indexOf(drawingState.value) >= 0)
 
   const drawingState = ref(DrawingState.Initial)
 
@@ -40,6 +40,10 @@ export const useSimulationStore = defineStore('simulationStore', () => {
 
   function stopDrawing() {
     setDrawingState(DrawingState.Stopped)
+  }
+
+  function resumeDrawing() {
+    setDrawingState(DrawingState.Resumed)
   }
 
   function finishedDrawing() {
@@ -67,5 +71,5 @@ export const useSimulationStore = defineStore('simulationStore', () => {
     }
   }
 
-  return { conditions, conditionsInput, drawingState, activeVisualization, timeSpeed, timeSpeedMax, isDrawing, finishedDrawing, draw, stopDrawing }
+  return { conditions, conditionsInput, drawingState, activeVisualization, timeSpeed, timeSpeedMax, isDrawing, finishedDrawing, draw, stopDrawing, resumeDrawing }
 })

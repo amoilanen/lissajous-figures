@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, computed} from 'vue'
 import { storeToRefs } from 'pinia'
-
-import { useSimulationStore } from '@/stores/simulation'
+import { useSimulationStore, DrawingState } from '@/stores/simulation'
 import { numberValidation } from '@/utils/Validations'
 
 const simulationStore = useSimulationStore()
@@ -16,10 +15,30 @@ const validationRules = {
   phase: [ numberValidation ]
 }
 
-const { conditionsInput, isDrawing, timeSpeed } = storeToRefs(simulationStore)
-const { timeSpeedMax, draw, stopDrawing } = simulationStore
+const { conditionsInput, isDrawing, timeSpeed, drawingState } = storeToRefs(simulationStore)
+const { timeSpeedMax, draw, stopDrawing, resumeDrawing } = simulationStore
 
 const controlsForm = ref<HTMLFormElement | null>(null)
+
+function stopOrResumeDrawing() {
+  if (drawingState.value == DrawingState.Started || drawingState.value == DrawingState.Resumed) {
+    stopDrawing()
+  } else if (drawingState.value == DrawingState.Stopped) {
+    resumeDrawing()
+  }
+}
+
+const stopOrResumeButtonLabel = computed(() => {
+  if (drawingState.value == DrawingState.Stopped) {
+    return 'Resume'
+  } else {
+    return 'Stop'
+  }
+})
+
+const isStopOrResumeButtonEnabled = computed(() => {
+  return [DrawingState.Started, DrawingState.Resumed, DrawingState.Stopped].indexOf(drawingState.value) >= 0
+})
 
 onMounted(async () => {
   await controlsForm.value!.validate()
@@ -53,7 +72,7 @@ onMounted(async () => {
           <v-btn @click="draw" :disabled="!state.areInputsValid">Draw</v-btn>
         </v-col>
         <v-col cols="2">
-          <v-btn @click="stopDrawing" :disabled="!isDrawing">Stop</v-btn>
+          <v-btn @click="stopOrResumeDrawing" :disabled="!isStopOrResumeButtonEnabled">{{stopOrResumeButtonLabel}}</v-btn>
         </v-col>
       </v-row>
       <v-row>

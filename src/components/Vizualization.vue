@@ -47,7 +47,7 @@ function findMaxTimeUnits(initialConditions: InitialConditions): number {
 async function iterateThroughTime(f: (currentTime: number, initialConditions: InitialConditions, slowdownCoefficient: number) => Promise<void>): Promise<void> {
   const visualizationId = simulationStore.activeVisualization
   if (conditions.value != null && timeSpeed != null) {
-    while (isDrawing && simulationStore.activeVisualization == visualizationId && state.currentTime < state.maxTime) {
+    while (isDrawing.value && simulationStore.activeVisualization == visualizationId && state.currentTime < state.maxTime) {
       const slowdownCoefficient = 1 - timeSpeed.value
       await f(state.currentTime / TIME_TICKS_IN_TIME_UNIT, conditions.value, slowdownCoefficient)
       state.currentTime++
