@@ -16,7 +16,7 @@ const validationRules = {
 }
 
 const { conditionsInput, timeSpeed, drawingState } = storeToRefs(simulationStore)
-const { timeSpeedMax, draw, stopDrawing, resumeDrawing } = simulationStore
+const { timeSpeedMax, startDrawing, stopDrawing, resumeDrawing } = simulationStore
 
 const controlsForm = ref<HTMLFormElement | null>(null)
 
@@ -43,7 +43,7 @@ const isStopOrResumeButtonEnabled = computed(() => {
 onMounted(async () => {
   await controlsForm.value!.validate()
   if (state.areInputsValid) {
-    draw()
+    startDrawing()
   }
 })
 </script>
@@ -69,7 +69,7 @@ onMounted(async () => {
       </v-row>
       <v-row>
         <v-col cols="2">
-          <v-btn @click="draw" :disabled="!state.areInputsValid">Draw</v-btn>
+          <v-btn @click="startDrawing" :disabled="!state.areInputsValid">Draw</v-btn>
         </v-col>
         <v-col cols="2">
           <v-btn @click="stopOrResumeDrawing" :disabled="!isStopOrResumeButtonEnabled">{{stopOrResumeButtonLabel}}</v-btn>

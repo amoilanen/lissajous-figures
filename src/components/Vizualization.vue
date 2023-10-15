@@ -9,7 +9,7 @@ import { DrawingState, useSimulationStore } from '@/stores/simulation'
 
 const simulationStore = useSimulationStore()
 
-const { finishedDrawing } = simulationStore
+const { markDrawingAsFinished } = simulationStore
 const { conditions, isDrawing, timeSpeed } = storeToRefs(simulationStore)
 
 const props = defineProps({
@@ -53,7 +53,7 @@ async function iterateThroughTime(f: (currentTime: number, initialConditions: In
       state.currentTime++
     }
     if (simulationStore.activeVisualization == visualizationId && state.currentTime >= state.maxTime) {
-      finishedDrawing()
+      markDrawingAsFinished()
     }
   }
 }
