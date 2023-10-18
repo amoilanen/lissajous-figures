@@ -5,11 +5,6 @@ import { FrequencyAndPhaseInput, InitialConditions, InitialConditionsInput } fro
 import type { VisualizationId } from '@/utils/VisualizationId'
 import { createRandomVisualizationId } from '@/utils/VisualizationId'
 
-const initialConditionsInput = new InitialConditionsInput(
-  new FrequencyAndPhaseInput("15", "𝝅/2"),
-  new FrequencyAndPhaseInput("5", "0")
-)
-
 export enum DrawingState {
   Initial = "Initial",
   Started = "Started",
@@ -19,9 +14,15 @@ export enum DrawingState {
 }
 
 export const useSimulationStore = defineStore('simulationStore', () => {
+
+  const defaultInitialConditionsInput = new InitialConditionsInput(
+    new FrequencyAndPhaseInput("15", "𝝅/2"),
+    new FrequencyAndPhaseInput("5", "0")
+  )
+
   const activeVisualization = ref(null as (VisualizationId | null))
   const conditions = ref(null as InitialConditions | null)
-  const conditionsInput = ref(initialConditionsInput)
+  const conditionsInput = ref(defaultInitialConditionsInput)
   const timeSpeedMax = 1
   const timeSpeed = ref(timeSpeedMax)
   const isDrawing = computed(() => [DrawingState.Started, DrawingState.Resumed].indexOf(drawingState.value) >= 0)
@@ -47,6 +48,7 @@ export const useSimulationStore = defineStore('simulationStore', () => {
 
   function markDrawingAsFinished() {
     setDrawingState(DrawingState.Finished)
+    activeVisualization.value = null
   }
 
   function updateConditions() {
@@ -71,6 +73,7 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   }
 
   const state = {
+    defaultInitialConditionsInput,
     conditions,
     conditionsInput,
     drawingState,
