@@ -16,28 +16,28 @@ const validationRules = {
 }
 
 const { conditionsInput, timeSpeed, drawingState } = storeToRefs(simulationStore)
-const { timeSpeedMax, startDrawing, stopDrawing, resumeDrawing } = simulationStore
+const { timeSpeedMax, startDrawing, pauseDrawing, resumeDrawing } = simulationStore
 
 const controlsForm = ref<HTMLFormElement | null>(null)
 
-function stopOrResumeDrawing() {
+function pauseOrResumeDrawing() {
   if (drawingState.value == DrawingState.Started || drawingState.value == DrawingState.Resumed) {
-    stopDrawing()
-  } else if (drawingState.value == DrawingState.Stopped) {
+    pauseDrawing()
+  } else if (drawingState.value == DrawingState.Paused) {
     resumeDrawing()
   }
 }
 
-const stopOrResumeButtonLabel = computed(() => {
-  if (drawingState.value == DrawingState.Stopped) {
+const pauseOrResumeButtonLabel = computed(() => {
+  if (drawingState.value == DrawingState.Paused) {
     return 'Resume'
   } else {
-    return 'Stop'
+    return 'Pause'
   }
 })
 
 const isStopOrResumeButtonEnabled = computed(() => {
-  return [DrawingState.Started, DrawingState.Resumed, DrawingState.Stopped].indexOf(drawingState.value) >= 0
+  return [DrawingState.Started, DrawingState.Resumed, DrawingState.Paused].indexOf(drawingState.value) >= 0
 })
 
 onMounted(async () => {
@@ -72,7 +72,7 @@ onMounted(async () => {
           <v-btn @click="startDrawing" :disabled="!state.areInputsValid">Draw</v-btn>
         </v-col>
         <v-col cols="2">
-          <v-btn @click="stopOrResumeDrawing" :disabled="!isStopOrResumeButtonEnabled">{{stopOrResumeButtonLabel}}</v-btn>
+          <v-btn @click="pauseOrResumeDrawing" :disabled="!isStopOrResumeButtonEnabled">{{pauseOrResumeButtonLabel}}</v-btn>
         </v-col>
       </v-row>
       <v-row>

@@ -10,7 +10,7 @@ export enum DrawingState {
   Started = "Started",
   Resumed = "Resumed",
   Finished = "Finished",
-  Stopped = "Stopped"
+  Paused = "Stopped"
 }
 
 export const useSimulationStore = defineStore('simulationStore', () => {
@@ -31,15 +31,15 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   function startDrawing() {
     // Automatically stop any active drawing
     if (drawingState.value == DrawingState.Started) {
-      setDrawingState(DrawingState.Stopped)
+      setDrawingState(DrawingState.Paused)
     }
     setDrawingState(DrawingState.Started)
     updateConditions()
     activeVisualization.value = createRandomVisualizationId()
   }
 
-  function stopDrawing() {
-    setDrawingState(DrawingState.Stopped)
+  function pauseDrawing() {
+    setDrawingState(DrawingState.Paused)
   }
 
   function resumeDrawing() {
@@ -57,9 +57,9 @@ export const useSimulationStore = defineStore('simulationStore', () => {
 
   const VALID_TRANSITIONS = {
     [DrawingState.Initial]: [DrawingState.Started],
-    [DrawingState.Started]: [DrawingState.Stopped, DrawingState.Finished],
-    [DrawingState.Resumed]: [DrawingState.Stopped, DrawingState.Finished],
-    [DrawingState.Stopped]: [DrawingState.Started, DrawingState.Resumed],
+    [DrawingState.Started]: [DrawingState.Paused, DrawingState.Finished],
+    [DrawingState.Resumed]: [DrawingState.Paused, DrawingState.Finished],
+    [DrawingState.Paused]: [DrawingState.Started, DrawingState.Resumed],
     [DrawingState.Finished]: [DrawingState.Started]
   }
 
@@ -86,7 +86,7 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   const actions = {
     markDrawingAsFinished,
     startDrawing,
-    stopDrawing,
+    pauseDrawing,
     resumeDrawing
   }
 

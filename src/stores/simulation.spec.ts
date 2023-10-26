@@ -20,7 +20,7 @@ describe("simulation store", () => {
     expect(store.timeSpeed).toEqual(1)
   })
 
-  it("should update conditions and record active visualization id on startDrawing", () => {
+  it("startDrawing: should update conditions and record active visualization id", () => {
     const store = useSimulationStore()
     const conditionsInput = new InitialConditionsInput(
       new FrequencyAndPhaseInput("2", "4"),
@@ -41,6 +41,18 @@ describe("simulation store", () => {
     expect(store.timeSpeed).toEqual(1)
   })
 
+  it("pauseDrawing: should keep conditions, update state", () => {
+    const store = useSimulationStore()
+    store.startDrawing()
+    store.pauseDrawing()
+    expect(store.drawingState).toBe(DrawingState.Paused)
+    expect(store.isDrawing).to.be.false
+    expect(store.activeVisualization).to.not.be.null
+    expect(store.conditionsInput).toEqual(store.defaultInitialConditionsInput)
+    expect(store.conditions).toEqual(store.defaultInitialConditionsInput.parse())
+    expect(store.timeSpeed).toEqual(1)
+  })
+
   //TODO: Other methods tested in isolation
 
   it("should be possible to start and finish drawing", () => {
@@ -54,7 +66,6 @@ describe("simulation store", () => {
     expect(store.conditions).toEqual(store.defaultInitialConditionsInput.parse())
     expect(store.timeSpeed).toEqual(1)
   })
-
   //TODO: Resume drawing after it has been stopped
   //TODO: Resume drawing, stopping drawing again, resuming again
   //TODO: Start drawing after the drawing has been finished
