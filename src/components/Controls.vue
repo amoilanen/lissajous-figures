@@ -74,16 +74,12 @@ onMounted(async () => {
         <v-col cols="2">
           <v-btn @click="pauseOrResumeDrawing" :disabled="!isStopOrResumeButtonEnabled">{{pauseOrResumeButtonLabel}}</v-btn>
         </v-col>
-      </v-row>
-      <v-row>
+        <v-spacer></v-spacer>
         <v-col cols="6">
-        </v-col>
-        <v-col cols="6">
-          <v-label
-            class="text-caption"
-            text="Time speed:" />
           <v-slider
+            class="pa-0 ma-0"
             v-model="timeSpeed"
+            :hide-details="true"
             :min="0"
             :max="timeSpeedMax">
             <template v-slot:prepend>
@@ -97,6 +93,9 @@ onMounted(async () => {
               ></v-label>
             </template>
           ></v-slider>
+          <v-label
+            class="mt-0 pt-0 text-caption"
+            text="Time speed" />
         </v-col>
       </v-row>
     </v-container>
