@@ -92,11 +92,20 @@ async function resumeDrawing(): Promise<void> {
   continueDrawing(canvas)
 }
 
+async function resetDrawing(): Promise<void> {
+  const canvas = canvasRef.value! as typeof DrawingCanvas
+  state.maxTime = 0
+  state.currentTime = 0
+  canvas.clear()
+}
+
 watch(() => simulationStore.drawingState, function(state) {
   if (state == DrawingState.Started) {
     startDrawing()
   } else if (state == DrawingState.Resumed) {
     resumeDrawing()
+  } else if (state == DrawingState.Initial) {
+    resetDrawing()
   }
 })
 </script>

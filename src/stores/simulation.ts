@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 import { FrequencyAndPhaseInput, InitialConditions, InitialConditionsInput } from '@/models/InitialConditions'
 import type { VisualizationId } from '@/utils/VisualizationId'
@@ -28,6 +28,10 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   const isDrawing = computed(() => [DrawingState.Started, DrawingState.Resumed].indexOf(drawingState.value) >= 0)
   const drawingState = ref(DrawingState.Initial)
 
+  watch(conditionsInput.value, () => {
+    resetDrawing()
+  })
+
   function startDrawing() {
     // Automatically stop any active drawing
     if (drawingState.value == DrawingState.Started) {
@@ -51,16 +55,21 @@ export const useSimulationStore = defineStore('simulationStore', () => {
     activeVisualization.value = null
   }
 
+  function resetDrawing() {
+    setDrawingState(DrawingState.Initial)
+    activeVisualization.value = null
+  }
+
   function updateConditions() {
     conditions.value = conditionsInput.value.parse()
   }
 
   const VALID_TRANSITIONS = {
     [DrawingState.Initial]: [DrawingState.Started],
-    [DrawingState.Started]: [DrawingState.Paused, DrawingState.Finished],
-    [DrawingState.Resumed]: [DrawingState.Paused, DrawingState.Finished],
-    [DrawingState.Paused]: [DrawingState.Started, DrawingState.Resumed],
-    [DrawingState.Finished]: [DrawingState.Started]
+    [DrawingState.Started]: [DrawingState.Paused, DrawingState.Finished, DrawingState.Initial],
+    [DrawingState.Resumed]: [DrawingState.Paused, DrawingState.Finished, DrawingState.Initial],
+    [DrawingState.Paused]: [DrawingState.Started, DrawingState.Resumed, DrawingState.Initial],
+    [DrawingState.Finished]: [DrawingState.Started, DrawingState.Initial]
   }
 
   function setDrawingState(newState: DrawingState) {
