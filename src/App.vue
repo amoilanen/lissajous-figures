@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Explanation from "./components/Explanation.vue";
-import Vizualization from "./components/Vizualization.vue";
+import Visualization from "./components/Visualization.vue";
 import Controls from "./components/Controls.vue";
 
 const canvasDimensions = {
@@ -26,7 +26,7 @@ const canvasDimensions = {
               </v-container>
             </v-col>
             <v-col cols="8">
-              <Vizualization
+              <Visualization
                 :width="canvasDimensions.width"
                 :height="canvasDimensions.height" />
             </v-col>
