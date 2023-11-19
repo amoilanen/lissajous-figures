@@ -38,7 +38,7 @@ export const useSimulationStore = defineStore('simulationStore', () => {
     if (drawingState.value == DrawingState.Started) {
       setDrawingState(DrawingState.Paused)
     }
-    await delay(100)
+    await delay(0)
     setDrawingState(DrawingState.Started)
     updateConditions()
     activeVisualization.value = createRandomVisualizationId()
@@ -79,7 +79,6 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   function setDrawingState(newState: DrawingState) {
     const isValidTransition = VALID_TRANSITIONS[drawingState.value]?.indexOf(newState) >= 0
     if (isValidTransition) {
-      const oldState = drawingState.value
       drawingState.value = newState
     } else {
       throw new Error(`Invalid drawing state transition ${drawingState.value} -> ${newState}`)
@@ -101,7 +100,8 @@ export const useSimulationStore = defineStore('simulationStore', () => {
     markDrawingAsFinished,
     startDrawing,
     pauseDrawing,
-    resumeDrawing
+    resumeDrawing,
+    resetDrawing
   }
 
   return { ...state, ...actions }
