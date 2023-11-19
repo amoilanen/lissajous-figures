@@ -35,9 +35,7 @@ export const useSimulationStore = defineStore('simulationStore', () => {
 
   async function startDrawing() {
     // Automatically stop any active drawing
-    if (drawingState.value == DrawingState.Started) {
-      setDrawingState(DrawingState.Paused)
-    }
+    resetDrawing()
     await delay(0)
     setDrawingState(DrawingState.Started)
     updateConditions()
