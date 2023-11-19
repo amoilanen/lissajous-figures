@@ -18,10 +18,13 @@ const state = reactive({
 
 const root = ref(null)
 
-onMounted(() => {
+function getCanvas(): HTMLCanvasElement {
   const $el = root.value!
-  const canvas = $el as HTMLCanvasElement;
-  state.ctx = canvas.getContext('2d');
+  return $el as HTMLCanvasElement;
+}
+
+onMounted(() => {
+  state.ctx = getCanvas().getContext('2d');
 })
 
 async function clear() {
@@ -39,9 +42,21 @@ async function drawPoint(x: number, y: number, color: string = 'black', size: nu
   ctx.fill();
 }
 
+function downloadImage() {
+  const canvas = getCanvas()
+  const url = canvas.toDataURL('image/png').replace(/^data:image\/png/,'data:application/octet-stream')
+
+  //TODO: Extract method "downloadUrl"
+  const downloadLink = document.createElement('a')
+  downloadLink.setAttribute('download', 'LissajousCurve.png')
+  downloadLink.setAttribute('href', url)
+  downloadLink.click()
+}
+
 defineExpose({
   clear,
-  drawPoint
+  drawPoint,
+  downloadImage
 })
 </script>
 

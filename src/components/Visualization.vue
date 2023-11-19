@@ -10,7 +10,7 @@ import { DrawingState, useSimulationStore } from '@/stores/simulation'
 const simulationStore = useSimulationStore()
 
 const { markDrawingAsFinished } = simulationStore
-const { conditions, isDrawing, timeSpeed } = storeToRefs(simulationStore)
+const { conditions, isDrawing, timeSpeed, isFinished } = storeToRefs(simulationStore)
 
 const props = defineProps({
   width: {
@@ -108,12 +108,20 @@ watch(() => simulationStore.drawingState, function(state) {
     resetDrawing()
   }
 })
+
+function downloadImage() {
+  const canvas = canvasRef.value! as typeof DrawingCanvas
+  canvas.downloadImage()
+}
 </script>
 
 <template>
   <v-container class="canvas">
     <v-row cols="12">
       <DrawingCanvas ref="canvasRef" :width="width" :height="height"></DrawingCanvas>
+    </v-row>
+    <v-row v-if="isFinished">
+      <v-btn icon="mdi-download" size="small" @click="downloadImage"></v-btn>
     </v-row>
   </v-container>
 </template>

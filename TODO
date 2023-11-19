@@ -9,11 +9,11 @@
 - Clicking the Draw button should terminate the currently ongoing drawing and start a new one - DONE
 - Add state management with Pinia - DONE
 - It is possible to stop the simulation drawing - DONE
-
-- Add unit tests for the state management
-
 - Add the Resume button to resume the drawing of the simulation (or even better: change the state of the Stop button to Resume) - OK
   -- If inputs are changed Resume should change to disabled Pause - OK
+- Add a button to save the image - OK
+
+- Add unit tests for the state management
 
 - It is possible to use one of the pre-selected simulation parameters which would result in an interesting figure
 

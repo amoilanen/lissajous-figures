@@ -27,6 +27,7 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   const timeSpeedMax = 1
   const timeSpeed = ref(timeSpeedMax)
   const isDrawing = computed(() => [DrawingState.Started, DrawingState.Resumed].indexOf(drawingState.value) >= 0)
+  const isFinished = computed(() => drawingState.value == DrawingState.Finished)
   const drawingState = ref(DrawingState.Initial)
 
   watch(conditionsInput.value, () => {
@@ -91,7 +92,8 @@ export const useSimulationStore = defineStore('simulationStore', () => {
     activeVisualization,
     timeSpeed,
     timeSpeedMax,
-    isDrawing
+    isDrawing,
+    isFinished
   }
 
   const actions = {
