@@ -43,7 +43,7 @@ const isStopOrResumeButtonEnabled = computed(() => {
 onMounted(async () => {
   await controlsForm.value!.validate()
   if (state.areInputsValid) {
-    startDrawing()
+    await startDrawing()
   }
 })
 </script>

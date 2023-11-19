@@ -4,13 +4,14 @@ import { ref, computed, watch } from 'vue'
 import { FrequencyAndPhaseInput, InitialConditions, InitialConditionsInput } from '@/models/InitialConditions'
 import type { VisualizationId } from '@/utils/VisualizationId'
 import { createRandomVisualizationId } from '@/utils/VisualizationId'
+import { delay } from '@/utils/AsyncUtils'
 
 export enum DrawingState {
   Initial = "Initial",
   Started = "Started",
   Resumed = "Resumed",
   Finished = "Finished",
-  Paused = "Stopped"
+  Paused = "Paused"
 }
 
 export const useSimulationStore = defineStore('simulationStore', () => {
@@ -32,11 +33,12 @@ export const useSimulationStore = defineStore('simulationStore', () => {
     resetDrawing()
   })
 
-  function startDrawing() {
+  async function startDrawing() {
     // Automatically stop any active drawing
     if (drawingState.value == DrawingState.Started) {
       setDrawingState(DrawingState.Paused)
     }
+    await delay(100)
     setDrawingState(DrawingState.Started)
     updateConditions()
     activeVisualization.value = createRandomVisualizationId()
@@ -56,7 +58,9 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   }
 
   function resetDrawing() {
-    setDrawingState(DrawingState.Initial)
+    if (drawingState.value != DrawingState.Initial) {
+      setDrawingState(DrawingState.Initial)
+    }
     activeVisualization.value = null
   }
 
@@ -75,6 +79,7 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   function setDrawingState(newState: DrawingState) {
     const isValidTransition = VALID_TRANSITIONS[drawingState.value]?.indexOf(newState) >= 0
     if (isValidTransition) {
+      const oldState = drawingState.value
       drawingState.value = newState
     } else {
       throw new Error(`Invalid drawing state transition ${drawingState.value} -> ${newState}`)

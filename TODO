@@ -13,7 +13,7 @@
 - Add unit tests for the state management
 
 - Add the Resume button to resume the drawing of the simulation (or even better: change the state of the Stop button to Resume) - OK
-  -- If inputs are changed Resume should change to disabled Stop
+  -- If inputs are changed Resume should change to disabled Pause - OK
 
 - It is possible to use one of the pre-selected simulation parameters which would result in an interesting figure
 
