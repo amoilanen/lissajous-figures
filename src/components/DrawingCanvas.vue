@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
+import { downloadUrl } from '@/utils/DownloadUtils'
 
 const props = defineProps({
   width: {
@@ -45,12 +46,7 @@ async function drawPoint(x: number, y: number, color: string = 'black', size: nu
 function downloadImage() {
   const canvas = getCanvas()
   const url = canvas.toDataURL('image/png').replace(/^data:image\/png/,'data:application/octet-stream')
-
-  //TODO: Extract method "downloadUrl"
-  const downloadLink = document.createElement('a')
-  downloadLink.setAttribute('download', 'LissajousCurve.png')
-  downloadLink.setAttribute('href', url)
-  downloadLink.click()
+  downloadUrl(url, 'LissajousCurve.png')
 }
 
 defineExpose({

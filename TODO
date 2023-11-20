@@ -13,9 +13,10 @@
   -- If inputs are changed Resume should change to disabled Pause - OK
 - Add a button to save the image - OK
 
+- It is possible to use one of the pre-selected simulation parameters which would result in an interesting figure
+
 - Add unit tests for the state management
 
-- It is possible to use one of the pre-selected simulation parameters which would result in an interesting figure
 
 - Add unit tests for components using vitest and vue-test-utils
 - Responsive layout: should work on an iPad screen, iPhone screen and smaller 15' old displays

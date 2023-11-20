@@ -3,6 +3,7 @@ import { reactive, ref, onMounted, computed} from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSimulationStore, DrawingState } from '@/stores/simulation'
 import { numberValidation } from '@/utils/Validations'
+import { InitialConditionsInput, FrequencyAndPhaseInput } from '@/models/InitialConditions'
 
 const simulationStore = useSimulationStore()
 
@@ -46,11 +47,51 @@ onMounted(async () => {
     await startDrawing()
   }
 })
+
+const predefinedInputsLegend = `$$\\omega_x:\\omega_x \\phi_x \\phi_y$$`
+
+const possibleRatios = ['1:1', '1:2', '1:3', '2:3', '3:4', '3:5', '4:5', '5:6']
+const phases = ['0', '𝝅/4', '𝝅/2', '3𝝅/4', '𝝅']
+
+const predefinedInputs = possibleRatios.flatMap((ratio) => {
+  return phases.flatMap(phase => 
+    [`${ratio} ${phase} 0`]
+  )
+})
+
+async function startWithPredefinedParameters(predefinedInput: string) {
+  const parsedInput = predefinedInput.split(' ')
+  const frequencies = parsedInput[0].split(':').map(value => parseInt(value, 10) * 10)
+  const frequencyX = frequencies[0]
+  const frequencyY = frequencies[1]
+  const phaseX = parsedInput[1]
+  const phaseY = parsedInput[2]
+
+  const predefinedConditionsInput = new InitialConditionsInput(
+    new FrequencyAndPhaseInput(frequencyX.toString(), phaseX),
+    new FrequencyAndPhaseInput(frequencyY.toString(), phaseY)
+  )
+  conditionsInput.value = predefinedConditionsInput
+  await startDrawing()
+}
+
 </script>
 
 <template>
   <v-form ref="controlsForm" v-model="state.areInputsValid">
     <v-container class="controls">
+      <v-row>
+        <label>Predefined curve parameters format:</label>
+        <vue-mathjax id="inputs-legend" :formula="predefinedInputsLegend" />
+      </v-row>
+      <v-row>
+        <v-select
+          :items="predefinedInputs"
+          density="compact"
+          label="Select a predefined curve"
+          @update:model-value="startWithPredefinedParameters"
+        ></v-select>
+      </v-row>
       <v-row>
         <v-col cols="6">
           <v-text-field v-model="conditionsInput.x.phase" :rules="validationRules.phase" label="x initial phase"></v-text-field>
@@ -102,8 +143,14 @@ onMounted(async () => {
   </v-form>
 </template>
 
-<style scoped>
+<style>
   .v-form {
     width: 100%;
+  }
+
+  #inputs-legend > .MathJax_Display {
+    margin: 0;
+    padding: 0;
+    margin-left: 8px;
   }
 </style>
