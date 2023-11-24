@@ -3,14 +3,14 @@ import { reactive, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { findCommonPeriod } from '@/math/CommonPeriodFinder'
-import type { InitialConditions } from '@/models/InitialConditions'
+import { InitialConditions } from '@/models/InitialConditions'
 import DrawingCanvas from '@/components/DrawingCanvas.vue'
 import { DrawingState, useSimulationStore } from '@/stores/simulation'
 
 const simulationStore = useSimulationStore()
 
 const { markDrawingAsFinished } = simulationStore
-const { conditions, isDrawing, timeSpeed, isFinished } = storeToRefs(simulationStore)
+const { conditions, conditionsInput, isDrawing, timeSpeed, isFinished } = storeToRefs(simulationStore)
 
 const props = defineProps({
   width: {
@@ -111,9 +111,15 @@ watch(() => simulationStore.drawingState, function(state) {
   }
 })
 
+function getDownloadableImageTitle(): string {
+  const x = conditionsInput.value.x
+  const y = conditionsInput.value.y
+  return `lissajous-curve-${x.phase}-${y.phase}-${x.frequency}-${y.frequency}.png`
+}
+
 function downloadImage() {
   const canvas = canvasRef.value! as typeof DrawingCanvas
-  canvas.downloadImage()
+  canvas.downloadImage(getDownloadableImageTitle())
 }
 </script>
 

@@ -5,7 +5,6 @@ const emit = defineEmits<{
   (e: 'conditions-selected', conditions: InitialConditionsInput): void,
 }>()
 
-
 const predefinedInputsLegend = `$$\\omega_x:\\omega_x \\phi_x \\phi_y$$`
 
 const possibleRatios = ['1:1', '1:2', '1:3', '2:3', '3:4', '3:5', '4:5', '5:6']

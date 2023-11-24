@@ -63,10 +63,10 @@ async function drawPoint(x: number, y: number, color: string = 'black', size: nu
   })
 }
 
-function downloadImage() {
+function downloadImage(title: string) {
   const canvas = getCanvas(trail)
   const url = canvas.toDataURL('image/png').replace(/^data:image\/png/,'data:application/octet-stream')
-  downloadUrl(url, 'LissajousCurve.png')
+  downloadUrl(url, title)
 }
 
 defineExpose({

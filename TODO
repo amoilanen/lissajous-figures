@@ -12,8 +12,7 @@
 - Add the Resume button to resume the drawing of the simulation (or even better: change the state of the Stop button to Resume) - OK
   -- If inputs are changed Resume should change to disabled Pause - OK
 - Add a button to save the image - OK
-
-- It is possible to use one of the pre-selected simulation parameters which would result in an interesting figure
+- It is possible to use one of the pre-selected simulation parameters which would result in an interesting figure - OK
 
 - Add unit tests for the state management
 
