@@ -20,7 +20,7 @@
      class="mx-auto"
      width="100%"
      height="300"
-     prepend-icon="mdi-home"
+     prepend-icon="mdi-atom"
    >
      <template v-slot:title>
        Background Physics and Mathematics
