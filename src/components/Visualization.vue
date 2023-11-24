@@ -37,6 +37,7 @@ function sleep(time: number): Promise<void> {
 // Pessimisticly large value to draw the whole curve
 const DEFAULT_MAX_TIME_UNITS = 100
 const TIME_TICKS_IN_TIME_UNIT = 5000
+const CANVAS_PADDING_PX = 5
 
 function findMaxTimeUnits(initialConditions: InitialConditions): number {
   let commonPeriod = findCommonPeriod(initialConditions.x.frequency, initialConditions.y.frequency)
@@ -44,7 +45,7 @@ function findMaxTimeUnits(initialConditions: InitialConditions): number {
 }
 
 //TODO: Inline to continueDrawing?
-async function iterateThroughTime(f: (currentTime: number, initialConditions: InitialConditions, slowdownCoefficient: number) => Promise<void>): Promise<void> {
+async function iterateThroughTime(canvas: typeof DrawingCanvas, f: (currentTime: number, initialConditions: InitialConditions, slowdownCoefficient: number) => Promise<void>): Promise<void> {
   const visualizationId = simulationStore.activeVisualization
   if (conditions.value != null && timeSpeed != null) {
     while (isDrawing.value && simulationStore.activeVisualization == visualizationId && state.currentTime < state.maxTime) {
@@ -53,6 +54,7 @@ async function iterateThroughTime(f: (currentTime: number, initialConditions: In
       state.currentTime++
     }
     if (simulationStore.activeVisualization == visualizationId && state.currentTime >= state.maxTime) {
+      canvas.hideBob()
       markDrawingAsFinished()
     }
   }
@@ -60,9 +62,9 @@ async function iterateThroughTime(f: (currentTime: number, initialConditions: In
 
 async function continueDrawing(canvas: typeof DrawingCanvas) {
   const batchSize = 50
-  const amplitude = props.width / 2
+  const amplitude = props.width / 2 - CANVAS_PADDING_PX
   let i = 0
-  return iterateThroughTime(async (currentTime, initialConditions, slowdownCoefficient) => {
+  return iterateThroughTime(canvas, async (currentTime, initialConditions, slowdownCoefficient) => {
       let x = amplitude * Math.cos(initialConditions.x.frequency * currentTime + initialConditions.x.phase)
       let y = amplitude * Math.cos(initialConditions.y.frequency * currentTime + initialConditions.y.phase)
       await canvas.drawPoint(x, y)
