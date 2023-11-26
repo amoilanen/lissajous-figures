@@ -111,7 +111,7 @@ watch(() => simulationStore.drawingState, function(state) {
   }
 })
 
-function getDownloadableImageTitle(): string {
+function getImageTitle(): string {
   const x = conditionsInput.value.x
   const y = conditionsInput.value.y
   return `lissajous-curve-${x.phase}-${y.phase}-${x.frequency}-${y.frequency}.png`
@@ -119,7 +119,7 @@ function getDownloadableImageTitle(): string {
 
 function downloadImage() {
   const canvas = canvasRef.value! as typeof DrawingCanvas
-  canvas.downloadImage(getDownloadableImageTitle())
+  canvas.downloadImage(getImageTitle())
 }
 </script>
 
