@@ -45,12 +45,11 @@ function findMaxTimeUnits(initialConditions: InitialConditions): number {
 }
 
 //TODO: Inline to continueDrawing?
-async function iterateThroughTime(canvas: typeof DrawingCanvas, f: (currentTime: number, initialConditions: InitialConditions, slowdownCoefficient: number) => Promise<void>): Promise<void> {
+async function iterateThroughTime(canvas: typeof DrawingCanvas, f: (currentTime: number, initialConditions: InitialConditions, timeSpeed: number) => Promise<void>): Promise<void> {
   const visualizationId = simulationStore.activeVisualization
   if (conditions.value != null && timeSpeed != null) {
     while (isDrawing.value && simulationStore.activeVisualization == visualizationId && state.currentTime < state.maxTime) {
-      const slowdownCoefficient = 1 - timeSpeed.value
-      await f(state.currentTime / TIME_TICKS_IN_TIME_UNIT, conditions.value, slowdownCoefficient)
+      await f(state.currentTime / TIME_TICKS_IN_TIME_UNIT, conditions.value, timeSpeed.value)
       state.currentTime++
     }
     if (simulationStore.activeVisualization == visualizationId && state.currentTime >= state.maxTime) {
@@ -60,18 +59,26 @@ async function iterateThroughTime(canvas: typeof DrawingCanvas, f: (currentTime:
   }
 }
 
+const MAXIMUM_STEP_DELAY_MS = 1000
+async function stepDelay(timeSpeed: number) {
+  const slowdownCoefficient = 1 - timeSpeed
+  if (slowdownCoefficient > 0) {
+    await sleep(Math.pow(slowdownCoefficient, 5) * MAXIMUM_STEP_DELAY_MS)
+  }
+}
+
 async function continueDrawing(canvas: typeof DrawingCanvas) {
   const batchSize = 50
   const amplitude = props.width / 2 - CANVAS_PADDING_PX
   let i = 0
-  return iterateThroughTime(canvas, async (currentTime, initialConditions, slowdownCoefficient) => {
+  return iterateThroughTime(canvas, async (currentTime, initialConditions, timeSpeed) => {
       let x = amplitude * Math.cos(initialConditions.x.frequency * currentTime + initialConditions.x.phase)
       let y = amplitude * Math.cos(initialConditions.y.frequency * currentTime + initialConditions.y.phase)
       await canvas.drawPoint(x, y)
       i++;
       if (i == batchSize) {
-        if (slowdownCoefficient > 0) {
-          await sleep(slowdownCoefficient * 1000)
+        if (timeSpeed < 1) {
+          await stepDelay(timeSpeed)
         }
         i = 0
       }
