@@ -70,7 +70,7 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   const VALID_TRANSITIONS = {
     [DrawingState.Initial]: [DrawingState.Started],
     [DrawingState.Started]: [DrawingState.Paused, DrawingState.Finished, DrawingState.Initial],
-    [DrawingState.Resumed]: [DrawingState.Paused, DrawingState.Finished, DrawingState.Initial],
+    [DrawingState.Resumed]: [DrawingState.Started, DrawingState.Paused, DrawingState.Finished, DrawingState.Initial],
     [DrawingState.Paused]: [DrawingState.Started, DrawingState.Resumed, DrawingState.Initial],
     [DrawingState.Finished]: [DrawingState.Started, DrawingState.Initial]
   }

@@ -40,7 +40,7 @@ const pauseOrResumeButtonLabel = computed(() => {
 })
 
 const isStopOrResumeButtonEnabled = computed(() => {
-  return [DrawingState.Started, DrawingState.Resumed, DrawingState.Paused].indexOf(drawingState.value) >= 0
+  return [DrawingState.Started, DrawingState.Resumed, DrawingState.Paused].includes(drawingState.value)
 })
 
 onMounted(async () => {

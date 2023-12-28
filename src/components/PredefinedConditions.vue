@@ -15,19 +15,19 @@ function getPredefinedInputs(ratios: Array<String>, phases: Array<String>) {
 
 function parseInputs(inputs: Array<string>): { [key: string]: InitialConditionsInput} {
   const parsedInputPairs: Array<[string, InitialConditionsInput]> = inputs.map(input => {
-  const splitInput = input.split(' ')
-  const frequencies = splitInput[0].split(':').map(value => parseInt(value, 10) * 10)
-  const frequencyX = frequencies[0]
-  const frequencyY = frequencies[1]
-  const phaseX = splitInput[1]
-  const phaseY = splitInput[2]
-
-  const parsedInput = new InitialConditionsInput(
-    new FrequencyAndPhaseInput(frequencyX.toString(), phaseX),
-    new FrequencyAndPhaseInput(frequencyY.toString(), phaseY)
-  )
-  return [input, parsedInput]
-})
+    const splitInput = input.split(' ')
+    const frequencies = splitInput[0].split(':').map(value => parseInt(value, 10) * 10)
+    const frequencyX = frequencies[0]
+    const frequencyY = frequencies[1]
+    const phaseX = splitInput[1]
+    const phaseY = splitInput[2]
+  
+    const parsedInput = new InitialConditionsInput(
+      new FrequencyAndPhaseInput(frequencyX.toString(), phaseX),
+      new FrequencyAndPhaseInput(frequencyY.toString(), phaseY)
+    )
+    return [input, parsedInput]
+  })
 
   return parsedInputPairs.reduce((acc, [predefinedInput, parsedInput]) => {
     acc[predefinedInput] = parsedInput

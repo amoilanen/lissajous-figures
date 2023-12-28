@@ -3,7 +3,7 @@ import { reactive, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { findCommonPeriod } from '@/math/CommonPeriodFinder'
-import { InitialConditions } from '@/models/InitialConditions'
+import type { InitialConditions } from '@/models/InitialConditions'
 import DrawingCanvas from '@/components/DrawingCanvas.vue'
 import { DrawingState, useSimulationStore } from '@/stores/simulation'
 
