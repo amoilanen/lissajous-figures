@@ -18,17 +18,17 @@ const state = reactive({
   bobCtx: null as (null | CanvasRenderingContext2D)
 })
 
-const trail = ref(null)
-const bob = ref(null)
+const trailRef = ref<HTMLCanvasElement>()
+const bobRef = ref<HTMLCanvasElement>()
 
-function getCanvas(ref: Ref<null>): HTMLCanvasElement {
+function getCanvas(ref: Ref<HTMLCanvasElement| undefined>): HTMLCanvasElement {
   const $el = ref.value!
-  return $el as HTMLCanvasElement;
+  return $el
 }
 
 onMounted(() => {
-  state.trailCtx = getCanvas(trail).getContext('2d');
-  state.bobCtx = getCanvas(bob).getContext('2d');
+  state.trailCtx = getCanvas(trailRef).getContext('2d');
+  state.bobCtx = getCanvas(bobRef).getContext('2d');
 })
 
 async function clear() {
@@ -44,7 +44,7 @@ async function hideBob() {
   })
 }
 
-async function drawPoint(x: number, y: number, color: string = 'black', size: number = 2) {
+async function drawBodyPosition(x: number, y: number, color: string = 'black', size: number = 2) {
   let canvasX = x + props.width / 2
   let canvasY = y + props.height / 2
 
@@ -64,22 +64,22 @@ async function drawPoint(x: number, y: number, color: string = 'black', size: nu
 }
 
 function downloadImage(title: string) {
-  const canvas = getCanvas(trail)
+  const canvas = getCanvas(trailRef)
   const url = canvas.toDataURL('image/png').replace(/^data:image\/png/,'data:application/octet-stream')
   downloadUrl(url, title)
 }
 
 defineExpose({
   clear,
-  drawPoint,
+  drawBodyPosition,
   hideBob,
   downloadImage
 })
 </script>
 
 <template>
-  <canvas class="canvas-trail" ref="trail" :width="width" :height="height"></canvas>
-  <canvas class="canvas-bob" ref="bob" :width="width" :height="height"></canvas>
+  <canvas class="canvas-trail" ref="trailRef" :width="width" :height="height"></canvas>
+  <canvas class="canvas-bob" ref="bobRef" :width="width" :height="height"></canvas>
 </template>
 
 <style scoped>

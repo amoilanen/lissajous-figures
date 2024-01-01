@@ -23,11 +23,11 @@ const props = defineProps({
   }
 })
 
-const canvasRef = ref<typeof DrawingCanvas | null>(null)
+const canvasRef = ref<typeof DrawingCanvas>()
 
 const state = reactive({
-  currentTime: 0,
-  maxTime: 0
+  timeTicks: 0,
+  maxTimeTicks: 0
 })
 
 function sleep(time: number): Promise<void> {
@@ -48,11 +48,11 @@ function findMaxTimeUnits(initialConditions: InitialConditions): number {
 async function iterateThroughTime(canvas: typeof DrawingCanvas, f: (currentTime: number, initialConditions: InitialConditions, timeSpeed: number) => Promise<void>): Promise<void> {
   const visualizationId = simulationStore.activeVisualization
   if (conditions.value != null && timeSpeed != null) {
-    while (isDrawing.value && simulationStore.activeVisualization == visualizationId && state.currentTime < state.maxTime) {
-      await f(state.currentTime / TIME_TICKS_IN_TIME_UNIT, conditions.value, timeSpeed.value)
-      state.currentTime++
+    while (isDrawing.value && simulationStore.activeVisualization == visualizationId && state.timeTicks < state.maxTimeTicks) {
+      await f(state.timeTicks / TIME_TICKS_IN_TIME_UNIT, conditions.value, timeSpeed.value)
+      state.timeTicks++
     }
-    if (simulationStore.activeVisualization == visualizationId && state.currentTime >= state.maxTime) {
+    if (simulationStore.activeVisualization == visualizationId && state.timeTicks >= state.maxTimeTicks) {
       canvas.hideBob()
       markDrawingAsFinished()
     }
@@ -74,7 +74,7 @@ async function continueDrawing(canvas: typeof DrawingCanvas) {
   return iterateThroughTime(canvas, async (currentTime, initialConditions, timeSpeed) => {
       let x = amplitude * Math.cos(initialConditions.x.frequency * currentTime + initialConditions.x.phase)
       let y = amplitude * Math.cos(initialConditions.y.frequency * currentTime + initialConditions.y.phase)
-      await canvas.drawPoint(x, y)
+      await canvas.drawBodyPosition(x, y)
       i++;
       if (i == batchSize) {
         if (timeSpeed < 1) {
@@ -86,25 +86,25 @@ async function continueDrawing(canvas: typeof DrawingCanvas) {
 }
 
 async function startDrawing(): Promise<void> {
-  const canvas = canvasRef.value! as typeof DrawingCanvas
+  const canvas = canvasRef.value!
   await canvas.clear()
   if (conditions.value != null && timeSpeed != null) {
-    let maxTimeunits = findMaxTimeUnits(conditions.value)
-    state.maxTime = maxTimeunits * TIME_TICKS_IN_TIME_UNIT
-    state.currentTime = 0
+    let maxTimeUnits = findMaxTimeUnits(conditions.value)
+    state.maxTimeTicks = maxTimeUnits * TIME_TICKS_IN_TIME_UNIT
+    state.timeTicks = 0
     continueDrawing(canvas)
   }
 }
 
 async function resumeDrawing(): Promise<void> {
-  const canvas = canvasRef.value! as typeof DrawingCanvas
+  const canvas = canvasRef.value!
   continueDrawing(canvas)
 }
 
 async function resetDrawing(): Promise<void> {
-  const canvas = canvasRef.value! as typeof DrawingCanvas
-  state.maxTime = 0
-  state.currentTime = 0
+  const canvas = canvasRef.value!
+  state.maxTimeTicks = 0
+  state.timeTicks = 0
   canvas.clear()
 }
 
@@ -125,7 +125,7 @@ function getImageTitle(): string {
 }
 
 function downloadImage() {
-  const canvas = canvasRef.value! as typeof DrawingCanvas
+  const canvas = canvasRef.value!
   canvas.downloadImage(getImageTitle())
 }
 </script>
