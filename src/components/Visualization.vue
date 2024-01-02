@@ -2,6 +2,7 @@
 import { reactive, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
+import type { VisualizationId } from '@/utils/VisualizationId'
 import { findCommonPeriod } from '@/math/CommonPeriodFinder'
 import type { InitialConditions } from '@/models/InitialConditions'
 import DrawingCanvas from '@/components/DrawingCanvas.vue'
@@ -10,7 +11,7 @@ import { DrawingState, useSimulationStore } from '@/stores/simulation'
 const simulationStore = useSimulationStore()
 
 const { markDrawingAsFinished } = simulationStore
-const { conditions, conditionsInput, isDrawing, timeSpeed, isFinished } = storeToRefs(simulationStore)
+const { conditions, conditionsInput, isDrawing, timeSpeed, activeVisualization, drawingState, isFinished } = storeToRefs(simulationStore)
 
 const props = defineProps({
   width: {
@@ -38,25 +39,12 @@ function sleep(time: number): Promise<void> {
 const DEFAULT_MAX_TIME_UNITS = 100
 const TIME_TICKS_IN_TIME_UNIT = 5000
 const CANVAS_PADDING_PX = 5
+const DRAWING_BATCH_SIZE = 50
+
 
 function findMaxTimeUnits(initialConditions: InitialConditions): number {
   let commonPeriod = findCommonPeriod(initialConditions.x.frequency, initialConditions.y.frequency)
   return commonPeriod || DEFAULT_MAX_TIME_UNITS
-}
-
-//TODO: Inline to continueDrawing?
-async function iterateThroughTime(canvas: typeof DrawingCanvas, f: (currentTime: number, initialConditions: InitialConditions, timeSpeed: number) => Promise<void>): Promise<void> {
-  const visualizationId = simulationStore.activeVisualization
-  if (conditions.value != null && timeSpeed != null) {
-    while (isDrawing.value && simulationStore.activeVisualization == visualizationId && state.timeTicks < state.maxTimeTicks) {
-      await f(state.timeTicks / TIME_TICKS_IN_TIME_UNIT, conditions.value, timeSpeed.value)
-      state.timeTicks++
-    }
-    if (simulationStore.activeVisualization == visualizationId && state.timeTicks >= state.maxTimeTicks) {
-      canvas.hideBob()
-      markDrawingAsFinished()
-    }
-  }
 }
 
 const MAXIMUM_STEP_DELAY_MS = 1000
@@ -65,24 +53,6 @@ async function stepDelay(timeSpeed: number) {
   if (slowdownCoefficient > 0) {
     await sleep(Math.pow(slowdownCoefficient, 5) * MAXIMUM_STEP_DELAY_MS)
   }
-}
-
-async function continueDrawing(canvas: typeof DrawingCanvas) {
-  const batchSize = 50
-  const amplitude = props.width / 2 - CANVAS_PADDING_PX
-  let i = 0
-  return iterateThroughTime(canvas, async (currentTime, initialConditions, timeSpeed) => {
-      let x = amplitude * Math.cos(initialConditions.x.frequency * currentTime + initialConditions.x.phase)
-      let y = amplitude * Math.cos(initialConditions.y.frequency * currentTime + initialConditions.y.phase)
-      await canvas.drawBodyPosition(x, y)
-      i++;
-      if (i == batchSize) {
-        if (timeSpeed < 1) {
-          await stepDelay(timeSpeed)
-        }
-        i = 0
-      }
-    })
 }
 
 async function startDrawing(): Promise<void> {
@@ -101,6 +71,44 @@ async function resumeDrawing(): Promise<void> {
   continueDrawing(canvas)
 }
 
+async function continueDrawing(canvas: typeof DrawingCanvas) {
+  if (conditions.value != null && timeSpeed != null) {
+    const visualizationId = activeVisualization.value
+    await drawNextPositionBatches(canvas, conditions.value, visualizationId)
+    await finishDrawing(canvas, visualizationId)
+  }
+}
+
+async function drawNextPositionBatches(canvas: typeof DrawingCanvas, initialConditions: InitialConditions, currentVisualizationId: VisualizationId | null) {
+  let i = 0
+  while (isDrawing.value && activeVisualization.value == currentVisualizationId && state.timeTicks < state.maxTimeTicks) {
+      await drawNextPosition(canvas, initialConditions)
+      i++
+      if (i == DRAWING_BATCH_SIZE) {
+        if (timeSpeed.value < 1) {
+          await stepDelay(timeSpeed.value)
+        }
+        i = 0
+      }
+      state.timeTicks++
+    }
+}
+
+async function drawNextPosition(canvas: typeof DrawingCanvas, initialConditions: InitialConditions) {
+  let currentTime = state.timeTicks / TIME_TICKS_IN_TIME_UNIT
+  const amplitude = props.width / 2 - CANVAS_PADDING_PX
+  let x = amplitude * Math.cos(initialConditions.x.frequency * currentTime + initialConditions.x.phase)
+  let y = amplitude * Math.cos(initialConditions.y.frequency * currentTime + initialConditions.y.phase)
+  return canvas.drawBodyPosition(x, y)
+}
+
+async function finishDrawing(canvas: typeof DrawingCanvas, currentVisualizationId: VisualizationId | null) {
+  if (activeVisualization.value == currentVisualizationId && state.timeTicks >= state.maxTimeTicks) {
+      canvas.hideBob()
+      markDrawingAsFinished()
+    }
+}
+
 async function resetDrawing(): Promise<void> {
   const canvas = canvasRef.value!
   state.maxTimeTicks = 0
@@ -108,7 +116,7 @@ async function resetDrawing(): Promise<void> {
   canvas.clear()
 }
 
-watch(() => simulationStore.drawingState, function(state) {
+watch(() => drawingState.value, function(state) {
   if (state == DrawingState.Started) {
     startDrawing()
   } else if (state == DrawingState.Resumed) {
