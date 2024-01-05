@@ -74,24 +74,24 @@ async function resumeDrawing(): Promise<void> {
 async function continueDrawing(canvas: typeof DrawingCanvas) {
   if (conditions.value != null && timeSpeed != null) {
     const visualizationId = activeVisualization.value
-    await drawNextPositionBatches(canvas, conditions.value, visualizationId)
+    await drawNextPositions(canvas, conditions.value, visualizationId)
     await finishDrawing(canvas, visualizationId)
   }
 }
 
-async function drawNextPositionBatches(canvas: typeof DrawingCanvas, initialConditions: InitialConditions, currentVisualizationId: VisualizationId | null) {
-  let i = 0
+async function drawNextPositions(canvas: typeof DrawingCanvas, initialConditions: InitialConditions, currentVisualizationId: VisualizationId | null) {
+  let positionNumberInBatch = 0
   while (isDrawing.value && activeVisualization.value == currentVisualizationId && state.timeTicks < state.maxTimeTicks) {
-      await drawNextPosition(canvas, initialConditions)
-      i++
-      if (i == DRAWING_BATCH_SIZE) {
-        if (timeSpeed.value < 1) {
-          await stepDelay(timeSpeed.value)
-        }
-        i = 0
+    await drawNextPosition(canvas, initialConditions)
+    positionNumberInBatch++
+    if (positionNumberInBatch == DRAWING_BATCH_SIZE) {
+      if (timeSpeed.value < 1) {
+        await stepDelay(timeSpeed.value)
       }
-      state.timeTicks++
+      positionNumberInBatch = 0
     }
+    state.timeTicks++
+  }
 }
 
 async function drawNextPosition(canvas: typeof DrawingCanvas, initialConditions: InitialConditions) {
@@ -104,9 +104,9 @@ async function drawNextPosition(canvas: typeof DrawingCanvas, initialConditions:
 
 async function finishDrawing(canvas: typeof DrawingCanvas, currentVisualizationId: VisualizationId | null) {
   if (activeVisualization.value == currentVisualizationId && state.timeTicks >= state.maxTimeTicks) {
-      canvas.hideBob()
-      markDrawingAsFinished()
-    }
+    canvas.hideBob()
+    markDrawingAsFinished()
+  }
 }
 
 async function resetDrawing(): Promise<void> {

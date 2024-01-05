@@ -14,28 +14,29 @@ export enum DrawingState {
   Paused = "Paused"
 }
 
+const defaultInitialConditionsInput = new InitialConditionsInput(
+  new FrequencyAndPhaseInput("15", "𝝅/2"),
+  new FrequencyAndPhaseInput("5", "0")
+)
+
 export const useSimulationStore = defineStore('simulationStore', () => {
-
-  const defaultInitialConditionsInput = new InitialConditionsInput(
-    new FrequencyAndPhaseInput("15", "𝝅/2"),
-    new FrequencyAndPhaseInput("5", "0")
-  )
-
+  const drawingState = ref(DrawingState.Initial)
   const activeVisualization = ref(null as (VisualizationId | null))
+
   const conditions = ref(null as InitialConditions | null)
-  const conditionsInput = ref(defaultInitialConditionsInput)
+  const conditionsInput = ref(defaultInitialConditionsInput.clone())
   const timeSpeedMax = 1
   const timeSpeed = ref(timeSpeedMax)
-  const isDrawing = computed(() => [DrawingState.Started, DrawingState.Resumed].indexOf(drawingState.value) >= 0)
+
+  const isDrawing = computed(() => [DrawingState.Started, DrawingState.Resumed].includes(drawingState.value))
   const isFinished = computed(() => drawingState.value == DrawingState.Finished)
-  const drawingState = ref(DrawingState.Initial)
 
   watch(conditionsInput.value, () => {
     resetDrawing()
   })
 
   async function startDrawing() {
-    // Automatically stop any active drawing
+    // Automatically stop aeany active drawing
     resetDrawing()
     await delay(0)
     setDrawingState(DrawingState.Started)
