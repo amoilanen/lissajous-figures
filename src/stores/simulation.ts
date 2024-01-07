@@ -14,7 +14,7 @@ export enum DrawingState {
   Paused = "Paused"
 }
 
-const defaultInitialConditionsInput = new InitialConditionsInput(
+export const defaultInitialConditionsInput = new InitialConditionsInput(
   new FrequencyAndPhaseInput("15", "𝝅/2"),
   new FrequencyAndPhaseInput("5", "0")
 )
@@ -86,7 +86,6 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   }
 
   const state = {
-    defaultInitialConditionsInput,
     conditions,
     conditionsInput,
     drawingState,

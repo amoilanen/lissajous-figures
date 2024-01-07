@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { InitialConditions, InitialConditionsInput, FrequencyAndPhaseInput, FrequencyAndPhase } from '@/models/InitialConditions'
 
-import { useSimulationStore, DrawingState } from '@/stores/simulation'
+import { useSimulationStore, DrawingState, defaultInitialConditionsInput } from '@/stores/simulation'
 
 describe("simulation store", () => {
 
@@ -15,7 +15,7 @@ describe("simulation store", () => {
     expect(store.drawingState).toBe(DrawingState.Initial)
     expect(store.activeVisualization).to.be.null
     expect(store.isDrawing).to.be.false
-    expect(store.conditionsInput).toEqual(store.defaultInitialConditionsInput)
+    expect(store.conditionsInput).toEqual(defaultInitialConditionsInput)
     expect(store.conditions).to.be.null
     expect(store.timeSpeed).toEqual(1)
   })
@@ -50,8 +50,8 @@ describe("simulation store", () => {
     expect(store.drawingState).toBe(DrawingState.Paused)
     expect(store.isDrawing).to.be.false
     expect(store.activeVisualization).to.not.be.null
-    expect(store.conditionsInput).toEqual(store.defaultInitialConditionsInput)
-    expect(store.conditions).toEqual(store.defaultInitialConditionsInput.parse())
+    expect(store.conditionsInput).toEqual(defaultInitialConditionsInput)
+    expect(store.conditions).toEqual(defaultInitialConditionsInput.parse())
     expect(store.timeSpeed).toEqual(1)
   })
 
@@ -64,8 +64,8 @@ describe("simulation store", () => {
     expect(store.drawingState).toBe(DrawingState.Resumed)
     expect(store.isDrawing).to.be.true
     expect(store.activeVisualization).to.not.be.null
-    expect(store.conditionsInput).toEqual(store.defaultInitialConditionsInput)
-    expect(store.conditions).toEqual(store.defaultInitialConditionsInput.parse())
+    expect(store.conditionsInput).toEqual(defaultInitialConditionsInput)
+    expect(store.conditions).toEqual(defaultInitialConditionsInput.parse())
     expect(store.timeSpeed).toEqual(1)
   })
 
@@ -77,8 +77,8 @@ describe("simulation store", () => {
     expect(store.drawingState).toBe(DrawingState.Finished)
     expect(store.isDrawing).to.be.false
     expect(store.activeVisualization).to.be.null
-    expect(store.conditionsInput).toEqual(store.defaultInitialConditionsInput)
-    expect(store.conditions).toEqual(store.defaultInitialConditionsInput.parse())
+    expect(store.conditionsInput).toEqual(defaultInitialConditionsInput)
+    expect(store.conditions).toEqual(defaultInitialConditionsInput.parse())
     expect(store.timeSpeed).toEqual(1)
   })
 
@@ -90,8 +90,8 @@ describe("simulation store", () => {
     expect(store.drawingState).toBe(DrawingState.Initial)
     expect(store.isDrawing).to.be.false
     expect(store.activeVisualization).to.be.null
-    expect(store.conditionsInput).toEqual(store.defaultInitialConditionsInput)
-    expect(store.conditions).toEqual(store.defaultInitialConditionsInput.parse())
+    expect(store.conditionsInput).toEqual(defaultInitialConditionsInput)
+    expect(store.conditions).toEqual(defaultInitialConditionsInput.parse())
     expect(store.timeSpeed).toEqual(1)
   })
 
