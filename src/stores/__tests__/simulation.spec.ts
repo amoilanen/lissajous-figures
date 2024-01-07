@@ -33,6 +33,7 @@ describe("simulation store", () => {
     await store.startDrawing()
     expect(store.drawingState).toBe(DrawingState.Started)
     expect(store.isDrawing).to.be.true
+    expect(store.isFinished).to.be.false
     expect(store.activeVisualization).to.not.be.null
     expect(store.conditionsInput).toEqual(conditionsInput)
     expect(store.conditions).toEqual(new InitialConditions(
@@ -49,6 +50,7 @@ describe("simulation store", () => {
     store.pauseDrawing()
     expect(store.drawingState).toBe(DrawingState.Paused)
     expect(store.isDrawing).to.be.false
+    expect(store.isFinished).to.be.false
     expect(store.activeVisualization).to.not.be.null
     expect(store.conditionsInput).toEqual(defaultInitialConditionsInput)
     expect(store.conditions).toEqual(defaultInitialConditionsInput.parse())
@@ -63,6 +65,7 @@ describe("simulation store", () => {
     store.resumeDrawing()
     expect(store.drawingState).toBe(DrawingState.Resumed)
     expect(store.isDrawing).to.be.true
+    expect(store.isFinished).to.be.false
     expect(store.activeVisualization).to.not.be.null
     expect(store.conditionsInput).toEqual(defaultInitialConditionsInput)
     expect(store.conditions).toEqual(defaultInitialConditionsInput.parse())
@@ -76,6 +79,7 @@ describe("simulation store", () => {
     store.markDrawingAsFinished()
     expect(store.drawingState).toBe(DrawingState.Finished)
     expect(store.isDrawing).to.be.false
+    expect(store.isFinished).to.be.true
     expect(store.activeVisualization).to.be.null
     expect(store.conditionsInput).toEqual(defaultInitialConditionsInput)
     expect(store.conditions).toEqual(defaultInitialConditionsInput.parse())
@@ -89,6 +93,7 @@ describe("simulation store", () => {
     store.resetDrawing()
     expect(store.drawingState).toBe(DrawingState.Initial)
     expect(store.isDrawing).to.be.false
+    expect(store.isFinished).to.be.false
     expect(store.activeVisualization).to.be.null
     expect(store.conditionsInput).toEqual(defaultInitialConditionsInput)
     expect(store.conditions).toEqual(defaultInitialConditionsInput.parse())
