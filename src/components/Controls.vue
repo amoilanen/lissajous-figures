@@ -64,26 +64,26 @@ async function onPredefinedConditionsSelected(selectedConditionsInput: InitialCo
       </v-row>
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="conditionsInput.x.phase" :rules="validationRules.phase" label="x initial phase"></v-text-field>
+          <v-text-field data-test="phaseX" v-model="conditionsInput.x.phase" :rules="validationRules.phase" label="x initial phase"></v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="conditionsInput.x.frequency" :rules="validationRules.frequency" label="x frequency"></v-text-field>
+          <v-text-field data-test="frequencyX" v-model="conditionsInput.x.frequency" :rules="validationRules.frequency" label="x frequency"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="conditionsInput.y.phase" :rules="validationRules.phase" label="y initial phase"></v-text-field>
+          <v-text-field data-test="phaseY" v-model="conditionsInput.y.phase" :rules="validationRules.phase" label="y initial phase"></v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="conditionsInput.y.frequency" :rules="validationRules.frequency" label="y frequency"></v-text-field>
+          <v-text-field data-test="frequencyY" v-model="conditionsInput.y.frequency" :rules="validationRules.frequency" label="y frequency"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="2">
-          <v-btn @click="startDrawing" :disabled="!state.areInputsValid">Draw</v-btn>
+          <v-btn data-test="draw" @click="startDrawing" :disabled="!state.areInputsValid">Draw</v-btn>
         </v-col>
         <v-col cols="2">
-          <v-btn @click="pauseOrResumeDrawing" :disabled="!isStopOrResumeButtonEnabled">{{pauseOrResumeButtonLabel}}</v-btn>
+          <v-btn data-test="pauseOrResume" @click="pauseOrResumeDrawing" :disabled="!isStopOrResumeButtonEnabled">{{pauseOrResumeButtonLabel}}</v-btn>
         </v-col>
         <v-spacer></v-spacer>
         <v-col cols="6">
