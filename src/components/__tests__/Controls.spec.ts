@@ -5,20 +5,18 @@ import { initVueMathjax, initVuetify } from '@/plugins'
 import { VSelect } from 'vuetify/components';
 
 import Controls from '@/components/Controls.vue'
-import { useSimulationStore, DrawingState } from '@/stores/simulation'
+import { useSimulationStore } from '@/stores/simulation'
 
-import { storeToRefs, setActivePinia } from 'pinia'
+import { storeToRefs } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
-import type { TestingPinia } from '@pinia/testing';
 import { mount, VueWrapper } from '@vue/test-utils'
 
 describe('Controls', () => {
 
   let wrapper: VueWrapper;
-  let pinia: TestingPinia;
 
   beforeEach(() => {
-    pinia = createTestingPinia({
+    const pinia = createTestingPinia({
       createSpy: vi.fn
     })
     wrapper = mount(Controls, {
@@ -51,7 +49,6 @@ describe('Controls', () => {
     let frequencyYInput = wrapper.find('.v-text-field[data-test=frequencyY] input').element as HTMLInputElement
     expect(frequencyYInput.value).toBe('60')
 
-    setActivePinia(pinia)
     const simulationStore = useSimulationStore()
     const { conditionsInput } = storeToRefs(simulationStore)
     expect(conditionsInput.value).toEqual(new InitialConditionsInput(
