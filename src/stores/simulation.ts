@@ -36,9 +36,10 @@ export const useSimulationStore = defineStore('simulationStore', () => {
   })
 
   async function startDrawing() {
-    // Automatically stop aeany active drawing
+    // Automatically stop any active drawing
     resetDrawing()
     await delay(0)
+    resetDrawing()
     setDrawingState(DrawingState.Started)
     updateConditions()
     activeVisualization.value = createRandomVisualizationId()

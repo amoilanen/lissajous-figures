@@ -1,25 +1,29 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
+import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { InitialConditionsInput, FrequencyAndPhaseInput } from '@/models/InitialConditions'
 
-import { initPlugins } from '@/plugins'
+import { initVueMathjax, initVuetify } from '@/plugins'
 import { VSelect } from 'vuetify/components';
 
 import Controls from '@/components/Controls.vue'
+import { useSimulationStore, DrawingState } from '@/stores/simulation'
 
+import { storeToRefs, setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
+import type { TestingPinia } from '@pinia/testing';
 import { mount, VueWrapper } from '@vue/test-utils'
-
-const defaultPlugins = initPlugins()
 
 describe('Controls', () => {
 
   let wrapper: VueWrapper;
+  let pinia: TestingPinia;
 
   beforeEach(() => {
+    pinia = createTestingPinia({
+      createSpy: vi.fn
+    })
     wrapper = mount(Controls, {
       global: {
-        plugins: [createTestingPinia({
-          createSpy: vi.fn,
-        }), ...defaultPlugins]
+        plugins: [pinia, initVueMathjax(), initVuetify()]
       }
     })
   })
@@ -38,15 +42,23 @@ describe('Controls', () => {
 
     await select.$nextTick()
 
-    let phaseXInput = wrapper.find('.v-text-field[data-test=phaseX] input')
-    expect(phaseXInput.element.value).toBe('𝝅')
-    let frequencyXInput = wrapper.find('.v-text-field[data-test=frequencyX] input')
-    expect(frequencyXInput.element.value).toBe('50')
-    let phaseYInput = wrapper.find('.v-text-field[data-test=phaseY] input')
-    expect(phaseYInput.element.value).toBe('0')
-    let frequencyYInput = wrapper.find('.v-text-field[data-test=frequencyY] input')
-    expect(frequencyYInput.element.value).toBe('60')
-    //TODO: Assert that the store has been changed
+    let phaseXInput = wrapper.find('.v-text-field[data-test=phaseX] input').element as HTMLInputElement
+    expect(phaseXInput.value).toBe('𝝅')
+    let frequencyXInput = wrapper.find('.v-text-field[data-test=frequencyX] input').element as HTMLInputElement
+    expect(frequencyXInput.value).toBe('50')
+    let phaseYInput = wrapper.find('.v-text-field[data-test=phaseY] input').element as HTMLInputElement
+    expect(phaseYInput.value).toBe('0')
+    let frequencyYInput = wrapper.find('.v-text-field[data-test=frequencyY] input').element as HTMLInputElement
+    expect(frequencyYInput.value).toBe('60')
+
+    setActivePinia(pinia)
+    const simulationStore = useSimulationStore()
+    const { conditionsInput } = storeToRefs(simulationStore)
+    expect(conditionsInput.value).toEqual(new InitialConditionsInput(
+      new FrequencyAndPhaseInput("50", "𝝅"),
+      new FrequencyAndPhaseInput("60", "0")
+    ))
+    expect(simulationStore.startDrawing).toHaveBeenCalled()
   });
 
   //TODO: When drawing is active Pause is enabled
@@ -55,4 +67,9 @@ describe('Controls', () => {
   //TODO: If some input is invalid, then Draw is disabled
   //TODO: Changing speed updates speed in the store
   //TODO: Changing inputs updates inputs in the store
+    //timespeed
+    //phaseX
+    //frequencyX
+    //phaseY
+    //frequencyY
 });
