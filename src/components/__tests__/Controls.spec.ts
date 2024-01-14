@@ -1,6 +1,4 @@
-import { nextTick } from 'vue'
-
-import { describe, expect, it, beforeAll, beforeEach, vi } from 'vitest'
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 
 import { initPlugins } from '@/plugins'
 import { VSelect } from 'vuetify/components';
@@ -12,11 +10,11 @@ import { mount, VueWrapper } from '@vue/test-utils'
 
 const defaultPlugins = initPlugins()
 
-describe('Explanation', () => {
+describe('Controls', () => {
 
   let wrapper: VueWrapper;
 
-  beforeAll(() => {
+  beforeEach(() => {
     wrapper = mount(Controls, {
       global: {
         plugins: [createTestingPinia({
@@ -31,16 +29,14 @@ describe('Explanation', () => {
   it('should be possible to select one of the predefined inputs', async () => {
     const selectWrapper = wrapper.findComponent(VSelect) // Also possible to use the CSS selector .v-select
     expect(selectWrapper.exists()).toBe(true)
-    selectWrapper.trigger('click')
-
     const select = selectWrapper.vm as VSelect
-    const lastPredefinedInput = select.items[select.items.length - 1]
 
-    //TODO: Selecting the value does not lead to updating the value here. Is it because pinia store is fully mocked? What happens to the store
-    select.select(lastPredefinedInput)
+    const lastPredefinedInput = select.items[select.items.length - 1]
     expect(lastPredefinedInput).to.equal('5:6 𝝅 0')
 
-    await nextTick()
+    select.select({ value: lastPredefinedInput, title: lastPredefinedInput})
+
+    await select.$nextTick()
 
     let phaseXInput = wrapper.find('.v-text-field[data-test=phaseX] input')
     expect(phaseXInput.element.value).toBe('𝝅')
