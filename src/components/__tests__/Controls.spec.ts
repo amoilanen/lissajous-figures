@@ -1,12 +1,13 @@
+
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import type { Mock } from 'vitest'
 import { InitialConditionsInput, FrequencyAndPhaseInput } from '@/models/InitialConditions'
 
 import { initVueMathjax, initVuetify } from '@/plugins'
-import { VSelect } from 'vuetify/components';
+import { VSelect, VBtn } from 'vuetify/components';
 
 import Controls from '@/components/Controls.vue'
-import { useSimulationStore, defaultInitialConditionsInput } from '@/stores/simulation'
+import { useSimulationStore, defaultInitialConditionsInput, DrawingState } from '@/stores/simulation'
 
 import { storeToRefs } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
@@ -74,7 +75,19 @@ describe('Controls', () => {
     expect(simulationStore.startDrawing).toHaveBeenCalledTimes(1)
   });
 
-  //TODO: When drawing is active Pause is enabled
+  it('disables Start button, enables Pause when drawing is active', async () => {
+    const simulationStore = useSimulationStore()
+    simulationStore.$patch({ drawingState: DrawingState.Started })
+
+    await wrapper.vm.$nextTick()
+
+    //TODO: Improve type-safety/Typescript type inference
+    const drawButton = wrapper.findComponent<VBtn>(".v-btn[data-test=draw]")
+    expect(drawButton.vm.$props.disabled).toBe(false)
+    const pauseResumeButton = wrapper.findComponent<VBtn>(".v-btn[data-test=pauseOrResume]")
+    expect(pauseResumeButton.vm.$props.disabled).toBe(false)
+  });
+
   //TODO: When drawing is not active Draw is enabled
   //TODO: When drawing is paused both Draw and Resume are enabled
   //TODO: If some input is invalid, then Draw is disabled
