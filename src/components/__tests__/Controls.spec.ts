@@ -6,7 +6,7 @@ import { initVueMathjax, initVuetify } from '@/plugins'
 import { VSelect } from 'vuetify/components';
 
 import Controls from '@/components/Controls.vue'
-import { useSimulationStore } from '@/stores/simulation'
+import { useSimulationStore, defaultInitialConditionsInput } from '@/stores/simulation'
 
 import { storeToRefs } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
@@ -25,13 +25,26 @@ describe('Controls', () => {
         plugins: [pinia, initVueMathjax(), initVuetify()]
       }
     })
-  })
-
-  //TODO: Renders default values, assert that the state ot the store is rendered
-
-  it('should be possible to select one of the predefined inputs', async () => {
     const simulationStore = useSimulationStore();
     (simulationStore.startDrawing as Mock).mockReset()
+  })
+
+  it('renders the default values from the store', async() => {
+    let phaseXInput = wrapper.find('.v-text-field[data-test=phaseX] input').element as HTMLInputElement
+    expect(phaseXInput.value).toBe(defaultInitialConditionsInput.x.phase)
+    let frequencyXInput = wrapper.find('.v-text-field[data-test=frequencyX] input').element as HTMLInputElement
+    expect(frequencyXInput.value).toBe(defaultInitialConditionsInput.x.frequency)
+    let phaseYInput = wrapper.find('.v-text-field[data-test=phaseY] input').element as HTMLInputElement
+    expect(phaseYInput.value).toBe(defaultInitialConditionsInput.y.phase)
+    let frequencyYInput = wrapper.find('.v-text-field[data-test=frequencyY] input').element as HTMLInputElement
+    expect(frequencyYInput.value).toBe(defaultInitialConditionsInput.y.frequency)
+
+    const simulationStore = useSimulationStore()
+    expect(simulationStore.conditionsInput).toEqual(defaultInitialConditionsInput)
+    expect(simulationStore.startDrawing).not.toHaveBeenCalled()
+  })
+
+  it('should be possible to select one of the predefined inputs', async () => {
     const selectWrapper = wrapper.findComponent(VSelect) // Also possible to use the CSS selector .v-select
     expect(selectWrapper.exists()).toBe(true)
     const select = selectWrapper.vm as VSelect
@@ -52,6 +65,7 @@ describe('Controls', () => {
     let frequencyYInput = wrapper.find('.v-text-field[data-test=frequencyY] input').element as HTMLInputElement
     expect(frequencyYInput.value).toBe('60')
 
+    const simulationStore = useSimulationStore()
     const { conditionsInput } = storeToRefs(simulationStore)
     expect(conditionsInput.value).toEqual(new InitialConditionsInput(
       new FrequencyAndPhaseInput("50", "𝝅"),
