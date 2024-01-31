@@ -81,10 +81,9 @@ describe('Controls', () => {
 
     await wrapper.vm.$nextTick()
 
-    //TODO: Improve type-safety/Typescript type inference
-    const drawButton = wrapper.findComponent<VBtn>(".v-btn[data-test=draw]")
+    const drawButton = wrapper.findComponent(".v-btn[data-test=draw]").findComponent(VBtn)
     expect(drawButton.vm.$props.disabled).toBe(false)
-    const pauseResumeButton = wrapper.findComponent<VBtn>(".v-btn[data-test=pauseOrResume]")
+    const pauseResumeButton = wrapper.findComponent(".v-btn[data-test=pauseOrResume]").findComponent(VBtn)
     expect(pauseResumeButton.vm.$props.disabled).toBe(false)
   });
 
