@@ -75,7 +75,7 @@ describe('Controls', () => {
     expect(simulationStore.startDrawing).toHaveBeenCalledTimes(1)
   });
 
-  it('disables Start button, enables Pause when drawing is active', async () => {
+  it('Start and Pause are enabled when drawing is active', async () => {
     const simulationStore = useSimulationStore()
     simulationStore.$patch({ drawingState: DrawingState.Started })
 
@@ -83,12 +83,54 @@ describe('Controls', () => {
 
     const drawButton = wrapper.findComponent(".v-btn[data-test=draw]").findComponent(VBtn)
     expect(drawButton.vm.$props.disabled).toBe(false)
+    expect(drawButton.text()).toBe("Draw")
     const pauseResumeButton = wrapper.findComponent(".v-btn[data-test=pauseOrResume]").findComponent(VBtn)
     expect(pauseResumeButton.vm.$props.disabled).toBe(false)
+    expect(pauseResumeButton.text()).toBe("Pause")
   });
 
-  //TODO: When drawing is not active Draw is enabled
-  //TODO: When drawing is paused both Draw and Resume are enabled
+  it('Start is enabled, Pause disabled when drawing has finished', async () => {
+    const simulationStore = useSimulationStore()
+    simulationStore.$patch({ drawingState: DrawingState.Finished })
+
+    await wrapper.vm.$nextTick()
+
+    const drawButton = wrapper.findComponent(".v-btn[data-test=draw]").findComponent(VBtn)
+    expect(drawButton.vm.$props.disabled).toBe(false)
+    expect(drawButton.text()).toBe("Draw")
+    const pauseResumeButton = wrapper.findComponent(".v-btn[data-test=pauseOrResume]").findComponent(VBtn)
+    expect(pauseResumeButton.vm.$props.disabled).toBe(true)
+    expect(pauseResumeButton.text()).toBe("Pause")
+  });
+
+  it('Start is enabled, Pause disabled when drawing has finished initially', async () => {
+    const simulationStore = useSimulationStore()
+    simulationStore.$patch({ drawingState: DrawingState.Initial })
+
+    await wrapper.vm.$nextTick()
+
+    const drawButton = wrapper.findComponent(".v-btn[data-test=draw]").findComponent(VBtn)
+    expect(drawButton.vm.$props.disabled).toBe(false)
+    expect(drawButton.text()).toBe("Draw")
+    const pauseResumeButton = wrapper.findComponent(".v-btn[data-test=pauseOrResume]").findComponent(VBtn)
+    expect(pauseResumeButton.vm.$props.disabled).toBe(true)
+    expect(pauseResumeButton.text()).toBe("Pause")
+  });
+
+  it('Start, Resume are enabled when drawing is paused', async () => {
+    const simulationStore = useSimulationStore()
+    simulationStore.$patch({ drawingState: DrawingState.Paused })
+
+    await wrapper.vm.$nextTick()
+
+    const drawButton = wrapper.findComponent(".v-btn[data-test=draw]").findComponent(VBtn)
+    expect(drawButton.vm.$props.disabled).toBe(false)
+    expect(drawButton.text()).toBe("Draw")
+    const pauseResumeButton = wrapper.findComponent(".v-btn[data-test=pauseOrResume]").findComponent(VBtn)
+    expect(pauseResumeButton.vm.$props.disabled).toBe(false)
+    expect(pauseResumeButton.text()).toBe("Resume")
+  });
+
   //TODO: If some input is invalid, then Draw is disabled
   //TODO: Changing speed updates speed in the store
   //TODO: Changing inputs updates inputs in the store
