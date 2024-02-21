@@ -54,6 +54,11 @@ async function onPredefinedConditionsSelected(selectedConditionsInput: InitialCo
   conditionsInput.value = selectedConditionsInput;
   await startDrawing()
 }
+
+defineExpose({
+  state, // for testing
+  controlsForm // for testing
+})
 </script>
 
 <template>
