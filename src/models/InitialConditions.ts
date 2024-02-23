@@ -1,19 +1,9 @@
 export class FrequencyAndPhase {
-  frequency: number;
-  phase: number;
-  constructor(frequency: number, phase: number) {
-    this.frequency = frequency;
-    this.phase = phase;
-  }
+  constructor(public readonly frequency: number, public readonly phase: number) {}
 }
 
 export class InitialConditions {
-  x: FrequencyAndPhase;
-  y: FrequencyAndPhase;
-  constructor(x: FrequencyAndPhase, y: FrequencyAndPhase) {
-    this.x = x;
-    this.y = y;
-  }
+  constructor(public readonly x: FrequencyAndPhase, public readonly y: FrequencyAndPhase) {}
   public toString(): string {
     return JSON.stringify(this, null, 2);
   }
@@ -36,12 +26,7 @@ export function parsePhase(input: string): number {
 }
 
 export class FrequencyAndPhaseInput {
-  frequency: string;
-  phase: string;
-  constructor(frequency: string, phase: string) {
-    this.frequency = frequency;
-    this.phase = phase;
-  }
+  constructor(public readonly frequency: string, public readonly phase: string) {}
   parse(): FrequencyAndPhase {
     return new FrequencyAndPhase(parseFloat(this.frequency), parsePhase(this.phase))
   }
@@ -51,12 +36,7 @@ export class FrequencyAndPhaseInput {
 }
 
 export class InitialConditionsInput {
-  x: FrequencyAndPhaseInput;
-  y: FrequencyAndPhaseInput;
-  constructor(x: FrequencyAndPhaseInput, y: FrequencyAndPhaseInput) {
-    this.x = x;
-    this.y = y;
-  }
+  constructor(public readonly x: FrequencyAndPhaseInput, public readonly y: FrequencyAndPhaseInput) {}
   parse(): InitialConditions {
     return new InitialConditions(this.x.parse(), this.y.parse());
   };
