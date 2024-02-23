@@ -4,7 +4,7 @@ import type { Mock } from 'vitest'
 import { InitialConditionsInput, FrequencyAndPhaseInput } from '@/models/InitialConditions'
 
 import { initVueMathjax, initVuetify } from '@/plugins'
-import { VSelect, VBtn, VTextField } from 'vuetify/components';
+import { VSelect, VBtn } from 'vuetify/components';
 
 import Controls from '@/components/Controls.vue'
 import { useSimulationStore, defaultInitialConditionsInput, DrawingState } from '@/stores/simulation'
@@ -131,33 +131,42 @@ describe('Controls', () => {
     expect(pauseResumeButton.text()).toBe('Resume')
   });
 
-  it('should disable Draw and Pause buttons, show error when frequency x input is invalid', async () => {
-    let component = wrapper.findComponent(Controls).vm;
+  class InputFieldFixture {
+    constructor(public fieldName: string, public stateAccessor: (input: InitialConditionsInput) => string) {}
+  }
 
-    let frequencyXInput = wrapper.find('.v-text-field[data-test=frequencyX] input')
-    frequencyXInput.setValue('abc')
-
-    await wrapper.vm.$nextTick()
-    await component.controlsForm?.validate();
-
-    expect(component.state.areInputsValid).toBe(false);
-
-    let frequencyXInputMessages = wrapper.find('.v-text-field[data-test=frequencyX] .v-messages')
-    expect(frequencyXInputMessages.text()).toEqual('Should be a number')
-
-    const drawButton = wrapper.findComponent('.v-btn[data-test=draw]').findComponent(VBtn)
-    expect(drawButton.vm.$props.disabled).toBe(true)
-    expect(drawButton.text()).toBe('Draw')
-    const pauseResumeButton = wrapper.findComponent('.v-btn[data-test=pauseOrResume]').findComponent(VBtn)
-    expect(pauseResumeButton.vm.$props.disabled).toBe(true)
-    expect(pauseResumeButton.text()).toBe('Pause')
-
-    const simulationStore = useSimulationStore()
-    const { conditionsInput } = storeToRefs(simulationStore)
-    expect(conditionsInput.value.x.frequency).toEqual('abc')
-  });
-
-  //TODO: Test the cases when other inputs are invalid
+  [
+    new InputFieldFixture('frequencyX', conditionsInput => conditionsInput.x.frequency),
+    new InputFieldFixture('frequencyY', conditionsInput => conditionsInput.y.frequency),
+    new InputFieldFixture('phaseX', conditionsInput => conditionsInput.x.phase),
+    new InputFieldFixture('phaseY', conditionsInput => conditionsInput.y.phase)
+  ].forEach(fixture => {
+    it(`should disable Draw and Pause buttons, show error when ${fixture.fieldName} input is invalid`, async () => {
+      let component = wrapper.findComponent(Controls).vm;
+  
+      let input = wrapper.find(`.v-text-field[data-test=${fixture.fieldName}] input`)
+      input.setValue('abc')
+  
+      await wrapper.vm.$nextTick()
+      await component.controlsForm?.validate();
+  
+      expect(component.state.areInputsValid).toBe(false);
+  
+      let inputMessages = wrapper.find(`.v-text-field[data-test=${fixture.fieldName}] .v-messages`)
+      expect(inputMessages.text()).toEqual('Should be a number')
+  
+      const drawButton = wrapper.findComponent('.v-btn[data-test=draw]').findComponent(VBtn)
+      expect(drawButton.vm.$props.disabled).toBe(true)
+      expect(drawButton.text()).toBe('Draw')
+      const pauseResumeButton = wrapper.findComponent('.v-btn[data-test=pauseOrResume]').findComponent(VBtn)
+      expect(pauseResumeButton.vm.$props.disabled).toBe(true)
+      expect(pauseResumeButton.text()).toBe('Pause')
+  
+      const simulationStore = useSimulationStore()
+      const { conditionsInput } = storeToRefs(simulationStore)
+      expect(fixture.stateAccessor(conditionsInput.value)).toEqual('abc')
+    });
+  })
 
   //TODO: Changing speed updates speed in the store
   //TODO: Changing inputs updates inputs in the store
