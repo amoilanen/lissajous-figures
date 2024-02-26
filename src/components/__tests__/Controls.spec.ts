@@ -4,7 +4,7 @@ import type { Mock } from 'vitest'
 import { InitialConditionsInput, FrequencyAndPhaseInput } from '@/models/InitialConditions'
 
 import { initVueMathjax, initVuetify } from '@/plugins'
-import { VSelect, VBtn } from 'vuetify/components';
+import { VSelect, VSlider, VBtn } from 'vuetify/components';
 
 import Controls from '@/components/Controls.vue'
 import { useSimulationStore, defaultInitialConditionsInput, DrawingState } from '@/stores/simulation'
@@ -30,7 +30,7 @@ describe('Controls', () => {
     (simulationStore.startDrawing as Mock).mockReset()
   })
 
-  it('renders the default values from the store', async() => {
+  it('renders the default values from the store', async () => {
     let phaseXInput = wrapper.find('.v-text-field[data-test=phaseX] input').element as HTMLInputElement
     expect(phaseXInput.value).toBe(defaultInitialConditionsInput.x.phase)
     let frequencyXInput = wrapper.find('.v-text-field[data-test=frequencyX] input').element as HTMLInputElement
@@ -53,7 +53,7 @@ describe('Controls', () => {
     const lastPredefinedInput = select.items[select.items.length - 1]
     expect(lastPredefinedInput).to.equal('5:6 𝝅 0')
 
-    select.select({ value: lastPredefinedInput, title: lastPredefinedInput})
+    select.select({ value: lastPredefinedInput, title: lastPredefinedInput })
 
     await select.$nextTick()
 
@@ -132,7 +132,7 @@ describe('Controls', () => {
   });
 
   class InputFieldFixture {
-    constructor(public fieldName: string, public stateAccessor: (input: InitialConditionsInput) => string) {}
+    constructor(public fieldName: string, public stateAccessor: (input: InitialConditionsInput) => string) { }
   }
 
   [
@@ -143,36 +143,57 @@ describe('Controls', () => {
   ].forEach(fixture => {
     it(`should disable Draw and Pause buttons, show error when ${fixture.fieldName} input is invalid`, async () => {
       let component = wrapper.findComponent(Controls).vm;
-  
+
       let input = wrapper.find(`.v-text-field[data-test=${fixture.fieldName}] input`)
       input.setValue('abc')
-  
+
       await wrapper.vm.$nextTick()
       await component.controlsForm?.validate();
-  
+
       expect(component.state.areInputsValid).toBe(false);
-  
+
       let inputMessages = wrapper.find(`.v-text-field[data-test=${fixture.fieldName}] .v-messages`)
       expect(inputMessages.text()).toEqual('Should be a number')
-  
+
       const drawButton = wrapper.findComponent('.v-btn[data-test=draw]').findComponent(VBtn)
       expect(drawButton.vm.$props.disabled).toBe(true)
       expect(drawButton.text()).toBe('Draw')
       const pauseResumeButton = wrapper.findComponent('.v-btn[data-test=pauseOrResume]').findComponent(VBtn)
       expect(pauseResumeButton.vm.$props.disabled).toBe(true)
       expect(pauseResumeButton.text()).toBe('Pause')
-  
+
       const simulationStore = useSimulationStore()
       const { conditionsInput } = storeToRefs(simulationStore)
       expect(fixture.stateAccessor(conditionsInput.value)).toEqual('abc')
     });
   })
 
-  //TODO: Changing speed updates speed in the store
+  it('updating time speed updates speed in the store', async () => {
+    const speedSliderWrapper = wrapper.findComponent(VSlider) // Also possible to use the CSS selector .v-select
+    expect(speedSliderWrapper.exists()).toBe(true)
+
+    const speedValue = 0.5
+
+    const sliderTrackWrapper = speedSliderWrapper.find('.v-slider-track')
+    const sliderTrackWidth = sliderTrackWrapper.element.clientWidth
+    sliderTrackWrapper
+      .trigger('click', {
+        offsetX: sliderTrackWidth * speedValue,
+        offsetY: 0,
+    });
+
+    await speedSliderWrapper.vm.$nextTick()
+
+    //TODO: Why is the value not updated in the store?
+    const simulationStore = useSimulationStore()
+    const { timeSpeed } = storeToRefs(simulationStore)
+    expect(timeSpeed.value).toEqual(speedValue)
+  });
+
   //TODO: Changing inputs updates inputs in the store
-    //timespeed
-    //phaseX
-    //frequencyX
-    //phaseY
-    //frequencyY
+  //timespeed
+  //phaseX
+  //frequencyX
+  //phaseY
+  //frequencyY
 });
