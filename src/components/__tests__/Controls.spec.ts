@@ -172,28 +172,44 @@ describe('Controls', () => {
     const speedSliderWrapper = wrapper.findComponent(VSlider) // Also possible to use the CSS selector .v-select
     expect(speedSliderWrapper.exists()).toBe(true)
 
-    const speedValue = 0.5
+    // Setting to any value which is > 0 will not succeed because elements rendered with jsDom have zero width and height => sliderTrackWidth = 0
+    const speedValue = 0
 
-    const sliderTrackWrapper = speedSliderWrapper.find('.v-slider-track')
-    const sliderTrackWidth = sliderTrackWrapper.element.clientWidth
-    sliderTrackWrapper
-      .trigger('click', {
+    const sliderTrack = speedSliderWrapper.find(".v-slider-track");
+    const sliderTrackWidth = sliderTrack.element.clientWidth
+    sliderTrack
+      .trigger('mousedown', {
         offsetX: sliderTrackWidth * speedValue,
         offsetY: 0,
     });
+    sliderTrack
+    .trigger('mouseup', {
+      offsetX: sliderTrackWidth * speedValue,
+      offsetY: 0,
+  });
 
     await speedSliderWrapper.vm.$nextTick()
 
-    //TODO: Why is the value not updated in the store?
     const simulationStore = useSimulationStore()
     const { timeSpeed } = storeToRefs(simulationStore)
     expect(timeSpeed.value).toEqual(speedValue)
   });
 
-  //TODO: Changing inputs updates inputs in the store
-  //timespeed
-  //phaseX
-  //frequencyX
-  //phaseY
-  //frequencyY
+  it('should update the phase and frequency values in the state when inputs are updated', () => {
+    let frequencyXInput = wrapper.find('.v-text-field[data-test=frequencyX] input')
+    frequencyXInput.setValue(30)
+    let phaseXInput = wrapper.find('.v-text-field[data-test=phaseX] input')
+    phaseXInput.setValue('40𝝅')
+    let frequencyYInput = wrapper.find('.v-text-field[data-test=frequencyY] input')
+    frequencyYInput.setValue(50)
+    let phaseYInput = wrapper.find('.v-text-field[data-test=phaseY] input')
+    phaseYInput.setValue('60𝝅')
+
+    const simulationStore = useSimulationStore()
+    const { conditionsInput } = storeToRefs(simulationStore)
+    expect(conditionsInput.value).toEqual(new InitialConditionsInput(
+      new FrequencyAndPhaseInput('30', '40𝝅'),
+      new FrequencyAndPhaseInput('50', '60𝝅')
+    ))
+  });
 });

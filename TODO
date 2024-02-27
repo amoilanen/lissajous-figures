@@ -15,9 +15,9 @@
 - It is possible to use one of the pre-selected simulation parameters which would result in an interesting figure - OK
 
 - Add unit tests for the state management
-
-
 - Add unit tests for components using vitest and vue-test-utils
+- Add end-to-end tests using Cypress
+
 - Responsive layout: should work on an iPad screen, iPhone screen and smaller 15' old displays
 
 - Deployment to some public hosting site
