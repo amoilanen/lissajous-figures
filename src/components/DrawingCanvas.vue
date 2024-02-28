@@ -13,9 +13,18 @@ const props = defineProps({
   }
 })
 
+export interface DrawingContext {
+  fillStyle: string | CanvasGradient | CanvasPattern
+  clearRect(x: number, y: number, w: number, h: number): void
+  beginPath(): void
+  arc(x: number, y: number, radius: number, startAngle: number, endAngle: number): void
+  fill(): void
+}
+
 const state = reactive({
-  trailCtx: null as (null | CanvasRenderingContext2D),
-  bobCtx: null as (null | CanvasRenderingContext2D)
+  trailCtx: null as (null | DrawingContext),
+  bobCtx: null as (null | DrawingContext),
+  requestAnimationFrame: requestAnimationFrame as (callback: () => void) => number
 })
 
 const trailRef = ref<HTMLCanvasElement>()
@@ -26,10 +35,22 @@ function getCanvas(ref: Ref<HTMLCanvasElement| undefined>): HTMLCanvasElement {
   return $el
 }
 
+function getContext(ref: Ref<HTMLCanvasElement| undefined>): CanvasRenderingContext2D | null {
+  return getCanvas(ref).getContext('2d')
+}
+
 onMounted(() => {
-  state.trailCtx = getCanvas(trailRef).getContext('2d');
-  state.bobCtx = getCanvas(bobRef).getContext('2d');
+  setCtx(getContext(trailRef), getContext(bobRef));
 })
+
+function setCtx(trailCtx: DrawingContext | null, bobCtx: DrawingContext | null) {
+  state.trailCtx = trailCtx;
+  state.bobCtx = bobCtx;
+}
+
+function setRequestAnimationFrame(requestAnimationFrame: (callback: () => void) => number) {
+  state.requestAnimationFrame = requestAnimationFrame;
+}
 
 async function clear() {
   requestAnimationFrame(() => {
@@ -70,6 +91,8 @@ function downloadImage(title: string) {
 }
 
 defineExpose({
+  setCtx, // Made public for testing
+  setRequestAnimationFrame, // Made public for testing
   clear,
   drawBodyPosition,
   hideBob,
