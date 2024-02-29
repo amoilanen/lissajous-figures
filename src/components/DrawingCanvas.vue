@@ -41,6 +41,7 @@ function getContext(ref: Ref<HTMLCanvasElement| undefined>): CanvasRenderingCont
 
 onMounted(() => {
   setCtx(getContext(trailRef), getContext(bobRef));
+  setRequestAnimationFrame(requestAnimationFrame);
 })
 
 function setCtx(trailCtx: DrawingContext | null, bobCtx: DrawingContext | null) {
@@ -53,14 +54,14 @@ function setRequestAnimationFrame(requestAnimationFrame: (callback: () => void) 
 }
 
 async function clear() {
-  requestAnimationFrame(() => {
+  state.requestAnimationFrame(() => {
     state.trailCtx!.clearRect(0, 0, props.width, props.height)
     state.bobCtx!.clearRect(0, 0, props.width, props.height)
   })
 }
 
 async function hideBob() {
-  requestAnimationFrame(() => {
+  state.requestAnimationFrame(() => {
     state.bobCtx!.clearRect(0, 0, props.width, props.height)
   })
 }
@@ -73,7 +74,7 @@ async function drawBodyPosition(x: number, y: number, color: string = 'black', s
   let bobCtx = state.bobCtx!
   trailCtx.fillStyle = color
   bobCtx.fillStyle = color
-  requestAnimationFrame(() => {
+  state.requestAnimationFrame(() => {
     trailCtx.beginPath()
     trailCtx.arc(canvasX, canvasY, size, 0, 2 * Math.PI)
     trailCtx.fill()

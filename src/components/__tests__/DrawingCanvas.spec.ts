@@ -7,6 +7,8 @@ import { mount, VueWrapper } from '@vue/test-utils'
 
 describe('Controls', () => {
 
+  const width = 200;
+  const height = 300;
   let wrapper: VueWrapper;
 
   class MockContext implements DrawingContext {
@@ -34,6 +36,10 @@ describe('Controls', () => {
 
   beforeEach(() => {
     wrapper = mount(DrawingCanvas, {
+      props: {
+        width,
+        height
+      },
       global: {
         plugins: [initVuetify()]
       }
@@ -51,9 +57,12 @@ describe('Controls', () => {
     })
     await component.clear()
 
-    //TODO: Should return the list of the performed RenderingContext operations
-    expect(trailCtx.operations).toEqual([])
-    expect(bobCtx.operations).toEqual([])
+    expect(trailCtx.operations).toEqual([
+      `clearRect(0,0,${width},${height})`
+    ])
+    expect(bobCtx.operations).toEqual([
+      `clearRect(0,0,${width},${height})`
+    ])
   });
 
   //TODO: Test drawBodyPosition
