@@ -10,6 +10,8 @@ describe('Controls', () => {
   const width = 200;
   const height = 300;
   let wrapper: VueWrapper;
+  let bobCtx: MockContext;
+  let trailCtx: MockContext;
 
   class MockContext implements DrawingContext {
     operations: Array<string>;
@@ -44,19 +46,24 @@ describe('Controls', () => {
         plugins: [initVuetify()]
       }
     })
+    bobCtx = new MockContext()
+    trailCtx = new MockContext()
   })
 
-  it('clear should clear both the bob and the trail canvases', async () => {
-    let bobCtx = new MockContext()
-    let trailCtx = new MockContext()
+  function injectMocks() {
     let component = wrapper.findComponent(DrawingCanvas).vm
     component.setCtx(trailCtx, bobCtx)
     component.setRequestAnimationFrame(callback => {
       callback()
       return 0
     })
-    await component.clear()
+  }
 
+  it('clear should clear both the bob and the trail canvases', async () => {
+    injectMocks()
+
+    let component = wrapper.findComponent(DrawingCanvas).vm
+    await component.clear()
     expect(trailCtx.operations).toEqual([
       `clearRect(0,0,${width},${height})`
     ])
@@ -65,9 +72,35 @@ describe('Controls', () => {
     ])
   });
 
-  //TODO: Test drawBodyPosition
-  //TODO: Test hideBob
-  //TODO: Test downloadImage
+  it('drawBodyPosition should draw the next position on the trail canvas and move the bob to this position on the bob canvas', async () => {
+    injectMocks()
 
+    let component = wrapper.findComponent(DrawingCanvas).vm
+    await component.drawBodyPosition(10, 10)
+    expect(trailCtx.operations).toEqual([
+      'beginPath',
+      `arc(110,160,2,0,${2 * Math.PI})`,
+      'fill'
+    ])
+    expect(bobCtx.operations).toEqual([
+      `clearRect(0,0,${width},${height})`,
+      'beginPath',
+      `arc(110,160,16,0,${2 * Math.PI})`,
+      'fill',
+    ])
+  });
+
+  it('hideBob should hide the bob on the bob canvas', async () => {
+    injectMocks()
+
+    let component = wrapper.findComponent(DrawingCanvas).vm
+    await component.hideBob()
+    expect(trailCtx.operations).toEqual([])
+    expect(bobCtx.operations).toEqual([
+      `clearRect(0,0,${width},${height})`
+    ])
+  });
+
+  //TODO: Test downloadImage
   //TODO: Test basic rendering and mounting: that there are two canvas HTML elements
 });
