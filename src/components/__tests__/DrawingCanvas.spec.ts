@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { describe, expect, it, vi, beforeEach, afterEach, Mock } from 'vitest'
 
 import { initVuetify } from '@/plugins'
 
@@ -12,6 +12,7 @@ describe('Controls', () => {
   let wrapper: VueWrapper;
   let bobCtx: MockContext;
   let trailCtx: MockContext;
+  let mockDownloadUrl: Mock & ((url: string, title: string) => void);
 
   class MockContext implements DrawingContext {
     operations: Array<string>;
@@ -36,7 +37,11 @@ describe('Controls', () => {
     }
   }
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    vi.mock('@/utils/DownloadUtils', () => ({ downloadUrl: vi.fn() }));
+    const { downloadUrl } = await import('@/utils/DownloadUtils');
+    mockDownloadUrl = downloadUrl as Mock;
+
     wrapper = mount(DrawingCanvas, {
       props: {
         width,
@@ -48,6 +53,10 @@ describe('Controls', () => {
     })
     bobCtx = new MockContext()
     trailCtx = new MockContext()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   })
 
   function injectMocks() {
@@ -70,7 +79,7 @@ describe('Controls', () => {
     expect(bobCtx.operations).toEqual([
       `clearRect(0,0,${width},${height})`
     ])
-  });
+  })
 
   it('drawBodyPosition should draw the next position on the trail canvas and move the bob to this position on the bob canvas', async () => {
     injectMocks()
@@ -88,7 +97,7 @@ describe('Controls', () => {
       `arc(110,160,16,0,${2 * Math.PI})`,
       'fill',
     ])
-  });
+  })
 
   it('hideBob should hide the bob on the bob canvas', async () => {
     injectMocks()
@@ -99,8 +108,19 @@ describe('Controls', () => {
     expect(bobCtx.operations).toEqual([
       `clearRect(0,0,${width},${height})`
     ])
-  });
+  })
 
-  //TODO: Test downloadImage
-  //TODO: Test basic rendering and mounting: that there are two canvas HTML elements
+  it('renders both canvases: for the trail and the bob', async () => {
+    const bobCanvas = wrapper.find('.canvas-bob');
+    expect(bobCanvas.exists()).toBeTruthy();
+    const trailCanvas = wrapper.find('.canvas-trail');
+    expect(trailCanvas.exists()).toBeTruthy();
+  })
+
+  it('should call downloadUrl with correct url and title when downloading image', () => {
+    let component = wrapper.findComponent(DrawingCanvas).vm
+    const imageTitle = "downloaded_image.svg"
+    component.downloadImage(imageTitle);
+    expect(mockDownloadUrl).toHaveBeenCalledWith(expect.stringContaining('data:application/octet-stream;base64'), imageTitle);
+  })
 });
