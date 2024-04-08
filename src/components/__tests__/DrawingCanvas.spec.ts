@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach, afterEach, Mock } from 'vitest'
+import { describe, expect, it, vi, beforeEach, afterEach, type Mock } from 'vitest'
 
 import { initVuetify } from '@/plugins'
 

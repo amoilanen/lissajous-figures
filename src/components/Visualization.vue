@@ -141,10 +141,10 @@ function downloadImage() {
 <template>
   <v-container class="canvas">
     <v-row cols="12">
-      <DrawingCanvas ref="canvasRef" :width="width" :height="height"></DrawingCanvas>
+      <DrawingCanvas ref="canvasRef" :width="width" :height="height" data-test="canvas"></DrawingCanvas>
     </v-row>
     <v-row v-if="isFinished">
-      <v-btn icon="mdi-download" size="small" @click="downloadImage"></v-btn>
+      <v-btn icon="mdi-download" size="small" data-test="downloadButton" @click="downloadImage"></v-btn>
     </v-row>
   </v-container>
 </template>
