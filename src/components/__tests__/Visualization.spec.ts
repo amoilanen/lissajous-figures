@@ -4,6 +4,7 @@ import type { Mock } from 'vitest'
 import { initVueMathjax, initVuetify } from '@/plugins'
 
 import { useSimulationStore, DrawingState } from '@/stores/simulation'
+import { FrequencyAndPhase, InitialConditions } from '@/models/InitialConditions'
 
 import { createTestingPinia } from '@pinia/testing'
 import { mount, VueWrapper } from '@vue/test-utils'
@@ -15,21 +16,43 @@ describe('Visualization', () => {
   let width = 200;
   let height = 100;
   let wrapper: VueWrapper;
-  let mockDrawingCanvas;
+  let mockDrawingCanvas: MockDrawingCanvas;
+
+  class MockDrawingCanvas {
+    operations: Array<string>
+    template: string
+    methods: { 
+      clear: () => void,
+      drawBodyPosition: (x: number, y: number, color: string, size: number) => void,
+      hideBob: () => void,
+      downloadImage: () => void
+    }
+    constructor() {
+        this.operations = [];
+        this.template = '<div />';
+        const self = this;
+        this.methods = {
+          clear() {
+            self.operations.push('clear');
+          },
+          drawBodyPosition(x: number, y: number, color: string = 'black', size: number = 2) {
+            self.operations.push(`drawBodyPosition(${x}, ${y}, ${color}, ${size})`);
+          },
+          hideBob() {
+            self.operations.push('hideBob');
+          },
+          downloadImage() {
+            self.operations.push('downloadImage');
+          }
+        }
+    }
+  }
 
   beforeEach(() => {
     const pinia = createTestingPinia({
       createSpy: vi.fn
     })
-    mockDrawingCanvas = {
-      template: '<div />',
-      methods: {
-        clear: vi.fn(),
-        drawBodyPosition: vi.fn(), //TODO: Record the actual drawn positions?
-        hideBob: vi.fn(),
-        downloadImage: vi.fn(),
-      }
-    };
+    mockDrawingCanvas = new MockDrawingCanvas();
     wrapper = mount(Visualization, {
       props: {
         width,
@@ -73,5 +96,24 @@ describe('Visualization', () => {
 
     let downloadButton = wrapper.find('.v-btn[data-test=downloadButton]');
     expect(downloadButton.exists()).toBe(true);
+  });
+
+  it('calls methods on the canvas after drawing has started', () => {
+    const visualizationComponent = wrapper.findComponent(Visualization).vm
+    visualizationComponent.setTimeticksInTimeunit(1)
+
+    mockDrawingCanvas.operations = [];
+    const simulationStore = useSimulationStore()
+    simulationStore.$patch({
+        drawingState: DrawingState.Finished
+    })
+    simulationStore.$patch({
+        drawingState: DrawingState.Started,
+        conditions: new InitialConditions(
+          new FrequencyAndPhase(1, 1),
+          new FrequencyAndPhase(1, 1)
+        )
+    })
+    expect(mockDrawingCanvas.operations).toEqual([]); //TODO: Wait for the component to fully render
   });
 });

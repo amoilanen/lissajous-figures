@@ -26,21 +26,25 @@ const props = defineProps({
 
 const canvasRef = ref<typeof DrawingCanvas>()
 
-const state = reactive({
-  timeTicks: 0,
-  maxTimeTicks: 0
-})
-
 function sleep(time: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, time));
 }
 
 // Pessimisticly large value to draw the whole curve
 const DEFAULT_MAX_TIME_UNITS = 100
-const TIME_TICKS_IN_TIME_UNIT = 5000
+const DEFAULT_TIME_TICKS_IN_TIME_UNIT = 5000
 const CANVAS_PADDING_PX = 5
 const DRAWING_BATCH_SIZE = 50
 
+const state = reactive({
+  timeTicks: 0,
+  maxTimeTicks: 0,
+  timeTicksInTimeUnit: DEFAULT_TIME_TICKS_IN_TIME_UNIT
+})
+
+function setTimeticksInTimeunit(timeTicks: number) {
+  state.timeTicks = timeTicks;
+}
 
 function findMaxTimeUnits(initialConditions: InitialConditions): number {
   let commonPeriod = findCommonPeriod(initialConditions.x.frequency, initialConditions.y.frequency)
@@ -60,7 +64,7 @@ async function startDrawing(): Promise<void> {
   await canvas.clear()
   if (conditions.value != null && timeSpeed != null) {
     let maxTimeUnits = findMaxTimeUnits(conditions.value)
-    state.maxTimeTicks = maxTimeUnits * TIME_TICKS_IN_TIME_UNIT
+    state.maxTimeTicks = maxTimeUnits * state.timeTicksInTimeUnit
     state.timeTicks = 0
     continueDrawing(canvas)
   }
@@ -95,7 +99,7 @@ async function drawNextPositions(canvas: typeof DrawingCanvas, initialConditions
 }
 
 async function drawNextPosition(canvas: typeof DrawingCanvas, initialConditions: InitialConditions) {
-  let currentTime = state.timeTicks / TIME_TICKS_IN_TIME_UNIT
+  let currentTime = state.timeTicks / state.timeTicksInTimeUnit
   const amplitude = props.width / 2 - CANVAS_PADDING_PX
   let x = amplitude * Math.cos(initialConditions.x.frequency * currentTime + initialConditions.x.phase)
   let y = amplitude * Math.cos(initialConditions.y.frequency * currentTime + initialConditions.y.phase)
@@ -136,6 +140,10 @@ function downloadImage() {
   const canvas = canvasRef.value!
   canvas.downloadImage(getImageTitle())
 }
+
+defineExpose({
+  setTimeticksInTimeunit,
+})
 </script>
 
 <template>
